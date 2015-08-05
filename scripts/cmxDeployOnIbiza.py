@@ -173,8 +173,10 @@ def setup_zookeeper():
             if rcg.roleType == "SERVER":
                 rcg.update_config({"maxClientCnxns": "1024"})
                 # Pick 3 hosts and deploy Zookeeper Server role
-                for host in random.sample(hosts, 3 if len(hosts) >= 3 else 1):
-                    cdh.create_service_role(service, rcg.roleType, host)
+                # mingrui change install on primary, secondary, and CM
+                cdh.create_service_role(service, rcg.roleType, cmx.cm_server)
+                cdh.create_service_role(service, rcg.roleType, [x for x in hosts if x.id == 0 ][0])
+                cdh.create_service_role(service, rcg.roleType, [x for x in hosts if x.id == 1 ][0])
 
         # init_zookeeper not required as the API performs this when adding Zookeeper
         # check.status_for_command("Waiting for ZooKeeper Service to initialize", service.init_zookeeper())
@@ -254,21 +256,21 @@ def setup_hdfs():
                                    "dfs_datanode_data_dir_perm": "755",
                                    "dfs_datanode_du_reserved": "3508717158",
                                    "dfs_datanode_failed_volumes_tolerated": "0",
-                                   "dfs_datanode_max_locked_memory": "1257242624", })   				
-            	
+                                   "dfs_datanode_max_locked_memory": "1257242624", })                   
+                
             if rcg.roleType == "GATEWAY":
                 # hdfs-GATEWAY - Default Group
                 rcg.update_config({"dfs_client_use_trash": True})
 
-	nn_host_id = [host for host in hosts if host.id == 0][0]
-	snn_host_id = [host for host in hosts if host.id == 1][0]	
-	# print nn_host_id.hostId
-	# print snn_host_id.hostId
-	for role_type in ['DATANODE']:
-		for host in management.get_hosts(include_cm_host = False):
-			if host.hostId != nn_host_id.hostId:
-				if host.hostId != snn_host_id.hostId:
-	            			cdh.create_service_role(service, role_type, host)
+    nn_host_id = [host for host in hosts if host.id == 0][0]
+    snn_host_id = [host for host in hosts if host.id == 1][0]    
+    # print nn_host_id.hostId
+    # print snn_host_id.hostId
+    for role_type in ['DATANODE']:
+        for host in management.get_hosts(include_cm_host = False):
+            if host.hostId != nn_host_id.hostId:
+                if host.hostId != snn_host_id.hostId:
+                            cdh.create_service_role(service, role_type, host)
 
         for role_type in ['GATEWAY']:
             for host in management.get_hosts(include_cm_host=(role_type == 'GATEWAY')):
@@ -305,7 +307,7 @@ def setup_hbase():
         service.update_config(cdh.dependencies_for(service))
 
         master_host_id = [host for host in hosts if host.id == 0][0]
-	backup_master_host_id = [host for host in hosts if host.id == 1][0]	
+        backup_master_host_id = [host for host in hosts if host.id == 1][0]    
 
         for rcg in [x for x in service.get_all_role_config_groups()]:
             if rcg.roleType == "MASTER":
@@ -314,9 +316,9 @@ def setup_hbase():
 
             if rcg.roleType == "REGIONSERVER":
                 for host in management.get_hosts(include_cm_host = False):
-			if host.hostId != master_host_id.hostId:
-				if host.hostId != backup_master_host_id.hostId:
-	            			cdh.create_service_role(service, rcg.roleType, host)
+                    if host.hostId != master_host_id.hostId:
+                        if host.hostId != backup_master_host_id.hostId:
+                            cdh.create_service_role(service, rcg.roleType, host)
            
         for role_type in ['HBASETHRIFTSERVER', 'HBASERESTSERVER']:
             cdh.create_service_role(service, role_type, random.choice(hosts)) 
@@ -466,7 +468,7 @@ def setup_spark_on_yarn():
         # Service-Wide
         service.update_config(cdh.dependencies_for(service))
 
-        cdh.create_service_role(service, "SPARK_YARN_HISTORY_SERVER",[x for x in hosts if x.id == 0][0])
+        cdh.create_service_role(service, "SPARK_YARN_HISTORY_SERVER",cmx.cm_server)
 
         for host in management.get_hosts(include_cm_host=True):
             cdh.create_service_role(service, "GATEWAY", host)
@@ -553,8 +555,8 @@ def setup_yarn():
                 for host in management.get_hosts(include_cm_host = False):
                         #print host.hostId
                         if host.hostId != rm_host_id.hostId:
-        					if host.hostId != srm_host_id.hostId:
-        						cdh.create_service_role(service, role_type, host)
+                            if host.hostId != srm_host_id.hostId:
+                                cdh.create_service_role(service, role_type, host)
 
         # Example of deploy_client_config. Recommended to Deploy Cluster wide client config.
         # cdh.deploy_client_config_for(service)
@@ -641,9 +643,11 @@ def setup_hive():
                           "hive_metastore_database_type": "postgresql"}
         service_config.update(cdh.dependencies_for(service))
         service.update_config(service_config)
-
+        
+        
+        #install to CM node, mingrui
         for role_type in ['HIVEMETASTORE', 'HIVESERVER2']:
-            cdh.create_service_role(service, role_type, [x for x in hosts if x.id == 0 ][0])
+            cdh.create_service_role(service, role_type, cmx.cm_server)
 
         for host in management.get_hosts(include_cm_host=True):
             cdh.create_service_role(service, "GATEWAY", host)
@@ -679,7 +683,8 @@ def setup_sqoop():
         # Service-Wide
         service.update_config(cdh.dependencies_for(service))
 
-        cdh.create_service_role(service, "SQOOP_SERVER", [x for x in hosts if x.id == 0][0])
+        #install to CM node, mingrui
+        cdh.create_service_role(service, "SQOOP_SERVER", cmx.cm_server)
 
         # check.status_for_command("Creating Sqoop 2 user directory", service._cmd('createSqoopUserDir'))
         check.status_for_command("Creating Sqoop 2 user directory", service.create_sqoop_user_dir())
@@ -793,10 +798,11 @@ def setup_oozie():
         service.update_config(cdh.dependencies_for(service))
 
         # Role Config Group equivalent to Service Default Group
+        # install to CM server, mingrui
         for rcg in [x for x in service.get_all_role_config_groups()]:
             if rcg.roleType == "OOZIE_SERVER":
                 rcg.update_config({})
-                cdh.create_service_role(service, rcg.roleType, [x for x in hosts if x.id == 0][0])
+                cdh.create_service_role(service, rcg.roleType, cmx.cm_server)
 
         check.status_for_command("Creating Oozie database", service.create_oozie_db())
         check.status_for_command("Installing Oozie ShareLib in HDFS", service.install_oozie_sharelib())
@@ -825,10 +831,11 @@ def setup_hue():
         service.update_config(cdh.dependencies_for(service))
 
         # Role Config Group equivalent to Service Default Group
+        # install to CM, mingrui
         for rcg in [x for x in service.get_all_role_config_groups()]:
             if rcg.roleType == "HUE_SERVER":
                 rcg.update_config({})
-                cdh.create_service_role(service, "HUE_SERVER", [x for x in hosts if x.id == 0][0])
+                cdh.create_service_role(service, "HUE_SERVER", cmx.cm_server)
         # This service is started later on
         # check.status_for_command("Starting Hue Service", service.start())
 
@@ -920,9 +927,9 @@ def setup_yarn_ha():
     if len(yarn.get_roles_by_type("RESOURCEMANAGER")) != 2:
         # Choose random node for standby RM
         # rm = random.choice([nm for nm in yarn.get_roles_by_type("NODEMANAGER")
-        # 		if nm.hostRef.hostId != yarn.get_roles_by_type("RESOURCEMANAGER")[0].hostRef.hostId])
+        #         if nm.hostRef.hostId != yarn.get_roles_by_type("RESOURCEMANAGER")[0].hostRef.hostId])
         rm = [x for x in hosts if x.id == 1 ][0]
-        #		if nm.hostRef.hostId != yarn.get_roles_by_type("RESOURCEMANAGER")[0].hostRef.hostId])
+        #        if nm.hostRef.hostId != yarn.get_roles_by_type("RESOURCEMANAGER")[0].hostRef.hostId])
         cmd = yarn.enable_rm_ha(rm.hostId, zookeeper.name)
         check.status_for_command("Enable YARN-HA - [ http://%s:7180/cmf/command/%s/details ]" %
                                  (socket.getfqdn(cmx.cm_server), cmd.id), cmd)
@@ -1688,17 +1695,17 @@ def main():
     setup_zookeeper()
     setup_hdfs()
     setup_hbase()
-    setup_solr()
-    setup_ks_indexer()
+    #setup_solr()
+    #setup_ks_indexer()
     setup_yarn()
     # setup_mapreduce()
-    setup_spark()
+    #setup_spark()
     #setup_flume()
-    #setup_spark_on_yarn()
+    setup_spark_on_yarn()
     setup_hive()
     #setup_sqoop()
     setup_sqoop_client()
-    #setup_impala()
+    setup_impala()
     setup_oozie()
     setup_hue()
 
