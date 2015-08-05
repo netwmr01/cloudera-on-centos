@@ -113,7 +113,7 @@
     },
     "keyVaultName": {
       "type": "string",
-      "defaultValue": "Apevault",
+      "defaultValue": "pevault",
       "metadata": {
         "description": "The name of the key vault which provides the private key used for SSH login.  See the readme for details."
       }
