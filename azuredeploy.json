@@ -18,14 +18,14 @@
     },
     "storageAccountPrefix": {
       "type": "string",
-      "defaultValue": "defaultStorageAccountPrefix",
+      "defaultValue": "defaultstorageaccountprefix",
       "metadata": {
         "description": "Unique namespace for the Storage Account where the Virtual Machine's disks will be placed"
       }
     },
     "dnsNamePrefix": {
       "type": "string",
-      "defaultValue": "defaultDnsNamePrefix",
+      "defaultValue": "defaultdnsnameprefix",
       "metadata": {
         "description": "Unique public dns name where the Virtual Machines will be exposed"
       }
@@ -38,21 +38,21 @@
     },
     "storageAccountType": {
       "type": "string",
-      "defaultValue": "Standard_LRS",
+      "defaultValue": "Premium_LRS",
       "metadata": {
         "description": "The type of the Storage Account to be created (Default to Standard_LRS)"
       }
     },
     "virtualNetworkName": {
       "type": "string",
-      "defaultValue": "clouderaVnet",
+      "defaultValue": "clouderavnet",
       "metadata": {
         "description": "The name of the virtual network provisioned for the deployment"
       }
     },
     "subnetName": {
       "type": "string",
-      "defaultValue": "clouderaSubnet",
+      "defaultValue": "clouderasubnet",
       "metadata": {
         "description": "Subnet name for the virtual network where resources will be provisioned"
       }
@@ -98,35 +98,35 @@
     },
     "vmSize": {
       "type": "string",
-      "defaultValue": "Standard_D14",
+      "defaultValue": "Standard_DS14",
       "metadata": {
         "description": "The size of the VMs deployed in the cluster (Defaults to Standard_D14)"
       }
     },
     "keyVaultResourceGroup": {
       "type": "string",
-      "defaultValue": "AzureRM-Util",
+      "defaultValue": "pe-testing-key",
       "metadata": {
         "description": "The resource group containing the key vault which provides the private key used for SSH login.  See the readme for details."
       }
     },
     "keyVaultName": {
       "type": "string",
-      "defaultValue": "AzureRM-Keys",
+      "defaultValue": "Apevault",
       "metadata": {
         "description": "The name of the key vault which provides the private key used for SSH login.  See the readme for details."
       }
     },
     "keyUri": {
       "type": "string",
-      "defaultValue": "https://azurerm-keys.vault.azure.net/secrets/sshKey/29a10ecf43b64c7ab7eace8866d64597",
+      "defaultValue": "https://pevault.vault.azure.net:443/secrets/mingruikey/be062a6886dc407aba028ef8810a4faa",
       "metadata": {
         "description": "The url of the private key used for SSH login.  See the readme for details."
       }
     }
   },
   "variables": {
-    "scriptsUri": "https://raw.githubusercontent.com/Azure/azure-quickstart-templates/master/cloudera-on-centos",
+    "scriptsUri": "https://raw.githubusercontent.com/netwmr01/cloudera-on-centos/master",
     "storageAccount": {
       "prefix": "[parameters('storageAccountPrefix')]",
       "type": "[parameters('storageAccountType')]"
