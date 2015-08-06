@@ -62,7 +62,15 @@ def add_hosts_to_cluster():
                               password=cmx.ssh_root_password, private_key=cmx.ssh_private_key)
         print "Installing host(s) to cluster '%s' - [ http://%s:7180/cmf/command/%s/details ]" % \
               (socket.getfqdn(cmx.cm_server), cmx.cm_server, cmd.id)
-        check.status_for_command("Hosts: %s " % host_list, cmd)
+        #check.status_for_command("Hosts: %s " % host_list, cmd)
+        print "Installing hosts. This might take a while."
+        while cmd.success == None:
+            sleep(5)
+            cmd = cmd.fetch()
+
+        if cmd.success != True:
+            print "cm_host_install failed: " + cmd.resultMessage
+            exit(0)
 
     hosts = []
     for host in api.get_all_hosts():
