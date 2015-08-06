@@ -269,7 +269,7 @@
           "vmSize": "[parameters('vmSpec').vmSize]"
         },
         "osProfile": {
-          "computername": "[concat(variables('publicIPAddressName'), copyIndex())]",
+          "computername": "[concat(variables('vmName'), copyIndex())]",
           "adminUsername": "[parameters('vmSpec').adminUserName]",
           "adminPassword": "[parameters('vmSpec').adminPassword]",
           "secrets": [
