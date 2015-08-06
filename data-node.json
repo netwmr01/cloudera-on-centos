@@ -188,18 +188,6 @@
           "computername": "[concat(variables('vmName'), copyIndex())]",
           "adminUsername": "[parameters('vmSpec').adminUserName]",
           "adminPassword": "[parameters('vmSpec').adminPassword]",
-          "secrets": [
-            {
-              "sourceVault": {
-                "id": "[parameters('vmSpec').keyVaultResourceId]"
-              },
-              "vaultCertificates": [
-                {
-                  "certificateUrl": "[parameters('vmSpec').keyUri]"
-                }
-              ]
-            }
-          ],
           "linuxConfiguration": {
             "disablePasswordAuthentication": "false"
           }
