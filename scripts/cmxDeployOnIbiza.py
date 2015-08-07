@@ -67,17 +67,20 @@ def add_hosts_to_cluster():
         while cmd.success == None:
             sleep(5)
             cmd = cmd.fetch()
+            print "Installing hosts... Checking"
 
         if cmd.success != True:
             print "cm_host_install failed: " + cmd.resultMessage
             exit(0)
 
+    print "Host install finish, agents installed"
     hosts = []
     for host in api.get_all_hosts():
         if host.hostId not in [x.hostId for x in cluster.list_hosts()]:
             print "Adding {'ip': '%s', 'hostname': '%s', 'hostId': '%s'}" % (host.ipAddress, host.hostname, host.hostId)
             hosts.append(host.hostId)
 
+    print "adding new hosts to cluster"
     if hosts:
         print "Adding hostId(s) to '%s'" % cmx.cluster_name
         print "%s" % hosts
@@ -1673,6 +1676,7 @@ def main():
     # 4. Deploy latest parcels into : 'Cluster 1'
     log("init_cluster")
     init_cluster()
+    log("add_hosts_to_cluster")
     add_hosts_to_cluster()
     # Deploy CDH Parcel
     log("deploy_parcel")
