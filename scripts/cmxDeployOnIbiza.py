@@ -1281,7 +1281,7 @@ class ManagementActions:
         return mgmt_password
     
     @classmethod
-    def get_cmhost():
+    def get_cmhost(cls):
         """
         return cm host in the same format as other host
         """
