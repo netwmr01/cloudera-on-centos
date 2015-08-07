@@ -178,6 +178,7 @@ def setup_zookeeper():
         cluster.create_service(service_name, service_type)
         service = cluster.get_service(service_name)
         hosts = management.get_hosts()
+        cmhost= management.get_cmhost()
         service.update_config({"zookeeper_datadir_autocreate": True})
 
         # Role Config Group equivalent to Service Default Group
@@ -186,10 +187,11 @@ def setup_zookeeper():
                 rcg.update_config({"maxClientCnxns": "1024"})
                 # Pick 3 hosts and deploy Zookeeper Server role
                 # mingrui change install on primary, secondary, and CM
-                print cmx.cm_server
+                print cmhost[0]
+                print cmhost
                 print [x for x in hosts if x.id == 0 ][0]
                 print [x for x in hosts if x.id == 1 ][0]
-                cdh.create_service_role(service, rcg.roleType, cmx.cm_server)
+                cdh.create_service_role(service, rcg.roleType, cmhost[0])
                 cdh.create_service_role(service, rcg.roleType, [x for x in hosts if x.id == 0 ][0])
                 cdh.create_service_role(service, rcg.roleType, [x for x in hosts if x.id == 1 ][0])
 
@@ -1277,6 +1279,27 @@ class ManagementActions:
             mgmt_password = match[match.index(idx) + len(idx):]
 
         return mgmt_password
+    
+    @classmethod
+    def get_cmhost():
+        """
+        return cm host in the same format as other host
+        """
+        api = ApiResource(server_host=cmx.cm_server, username=cmx.username, password=cmx.password)
+
+        idx = len(set(enumerate(cmx.host_names)))
+
+        
+        _host = [x for x in api.get_all_hosts() if x.ipAddress == socket.gethostbyname(cmx.cm_server)][0]
+        cmhost={
+            'id': idx,
+            'hostId': _host.hostId,
+            'hostname': _host.hostname,
+            'md5host': hashlib.md5(_host.hostname).hexdigest(),
+            'ipAddress': _host.ipAddress,
+        }
+
+        return type('', (), cmhost)
 
     @classmethod
     def get_hosts(cls, include_cm_host=False):
