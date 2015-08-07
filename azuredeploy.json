@@ -32,7 +32,7 @@
     },
     "region": {
       "type": "string",
-      "defaultValue": "West US",
+      "defaultValue": "japanwest",
       "metadata": {
         "description": "Location where resources will be provisioned"
       }
