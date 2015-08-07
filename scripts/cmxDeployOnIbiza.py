@@ -66,7 +66,7 @@ def add_hosts_to_cluster():
         #check.status_for_command("Hosts: %s " % host_list, cmd)
         print "Installing hosts. This might take a while."
         while cmd.success == None:
-            sleep(5)
+            sleep(20)
             cmd = cmd.fetch()
             print "Installing hosts... Checking"
 
@@ -186,6 +186,9 @@ def setup_zookeeper():
                 rcg.update_config({"maxClientCnxns": "1024"})
                 # Pick 3 hosts and deploy Zookeeper Server role
                 # mingrui change install on primary, secondary, and CM
+                print cmx.cm_server
+                print [x for x in hosts if x.id == 0 ][0]
+                print [x for x in hosts if x.id == 1 ][0]
                 cdh.create_service_role(service, rcg.roleType, cmx.cm_server)
                 cdh.create_service_role(service, rcg.roleType, [x for x in hosts if x.id == 0 ][0])
                 cdh.create_service_role(service, rcg.roleType, [x for x in hosts if x.id == 1 ][0])
@@ -1506,7 +1509,7 @@ class ActiveCommands:
                 _state += 1
                 if _state > 3:
                     _state = 0
-                time.sleep(0.5)
+                time.sleep(2)
             else:
                 print "\n [%s] %s" % (command.id, self._api.get("/commands/%s" % command.id)['resultMessage'])
                 self._child_cmd(self._api.get("/commands/%s" % command.id)['children']['items'])
