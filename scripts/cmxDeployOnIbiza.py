@@ -485,7 +485,8 @@ def setup_spark_on_yarn():
         # Service-Wide
         service.update_config(cdh.dependencies_for(service))
 
-        cdh.create_service_role(service, "SPARK_YARN_HISTORY_SERVER",cmx.cm_server)
+        cmhost= management.get_cmhost()
+        cdh.create_service_role(service, "SPARK_YARN_HISTORY_SERVER",cmhost)
 
         for host in management.get_hosts(include_cm_host=True):
             cdh.create_service_role(service, "GATEWAY", host)
@@ -525,7 +526,7 @@ def setup_yarn():
         # Service-Wide
         service.update_config(cdh.dependencies_for(service))
 
-
+        # need to move to vhd so it won't get lost
         default_yarn_dir_list = "/mnt/resource/yarn/nm"
         bashCommand="ls -la / | grep data | wc -l > count2.out"
 
@@ -548,7 +549,8 @@ def setup_yarn():
             if rcg.roleType == "JOBHISTORY":
                 # yarn-JOBHISTORY - Default Group
                 rcg.update_config({"mr2_jobhistory_java_heapsize": "1000000000"})
-                cdh.create_service_role(service, rcg.roleType, random.choice(hosts))
+                cmhost= management.get_cmhost()
+                cdh.create_service_role(service, rcg.roleType, cmhost)
             if rcg.roleType == "NODEMANAGER":
                 # yarn-NODEMANAGER - Default Group
                 rcg.update_config({"yarn_nodemanager_heartbeat_interval_ms": "100",
@@ -663,8 +665,9 @@ def setup_hive():
         
         
         #install to CM node, mingrui
+        cmhost= management.get_cmhost()
         for role_type in ['HIVEMETASTORE', 'HIVESERVER2']:
-            cdh.create_service_role(service, role_type, cmx.cm_server)
+            cdh.create_service_role(service, role_type, cmhost)
 
         for host in management.get_hosts(include_cm_host=True):
             cdh.create_service_role(service, "GATEWAY", host)
@@ -701,7 +704,8 @@ def setup_sqoop():
         service.update_config(cdh.dependencies_for(service))
 
         #install to CM node, mingrui
-        cdh.create_service_role(service, "SQOOP_SERVER", cmx.cm_server)
+        cmhost= management.get_cmhost()
+        cdh.create_service_role(service, "SQOOP_SERVER", cmhost)
 
         # check.status_for_command("Creating Sqoop 2 user directory", service._cmd('createSqoopUserDir'))
         check.status_for_command("Creating Sqoop 2 user directory", service.create_sqoop_user_dir())
@@ -816,10 +820,11 @@ def setup_oozie():
 
         # Role Config Group equivalent to Service Default Group
         # install to CM server, mingrui
+        cmhost= management.get_cmhost()
         for rcg in [x for x in service.get_all_role_config_groups()]:
             if rcg.roleType == "OOZIE_SERVER":
                 rcg.update_config({})
-                cdh.create_service_role(service, rcg.roleType, cmx.cm_server)
+                cdh.create_service_role(service, rcg.roleType, cmhost)
 
         check.status_for_command("Creating Oozie database", service.create_oozie_db())
         check.status_for_command("Installing Oozie ShareLib in HDFS", service.install_oozie_sharelib())
@@ -849,10 +854,11 @@ def setup_hue():
 
         # Role Config Group equivalent to Service Default Group
         # install to CM, mingrui
+        cmhost= management.get_cmhost()
         for rcg in [x for x in service.get_all_role_config_groups()]:
             if rcg.roleType == "HUE_SERVER":
                 rcg.update_config({})
-                cdh.create_service_role(service, "HUE_SERVER", cmx.cm_server)
+                cdh.create_service_role(service, "HUE_SERVER", cmhost)
         # This service is started later on
         # check.status_for_command("Starting Hue Service", service.start())
 
@@ -1000,7 +1006,9 @@ def setup_sentry():
         service.update_config(service_config)
         hosts = management.get_hosts()
 
-        cdh.create_service_role(service, "SENTRY_SERVER", random.choice(hosts))
+        #Mingrui install sentry to cm host
+        cmhost= management.get_cmhost()
+        cdh.create_service_role(service, "SENTRY_SERVER", cmhost)
         check.status_for_command("Creating Sentry Database Tables", service.create_sentry_database_tables())
 
         # Update configuration for Hive service
