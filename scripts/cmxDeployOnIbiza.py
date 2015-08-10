@@ -325,20 +325,21 @@ def setup_hbase():
 
         master_host_id = [host for host in hosts if host.id == 0][0]
         backup_master_host_id = [host for host in hosts if host.id == 1][0]    
-
+        cmhost = management.get_cmhost()
         for rcg in [x for x in service.get_all_role_config_groups()]:
             if rcg.roleType == "MASTER":
                 cdh.create_service_role(service, rcg.roleType, master_host_id)
                 cdh.create_service_role(service, rcg.roleType, backup_master_host_id)
+                cdh.create_service_role(service, rcg.roleType, cmhost)
 
             if rcg.roleType == "REGIONSERVER":
                 for host in management.get_hosts(include_cm_host = False):
                     if host.hostId != master_host_id.hostId:
                         if host.hostId != backup_master_host_id.hostId:
                             cdh.create_service_role(service, rcg.roleType, host)
-           
-        for role_type in ['HBASETHRIFTSERVER', 'HBASERESTSERVER']:
-            cdh.create_service_role(service, role_type, random.choice(hosts)) 
+
+        #for role_type in ['HBASETHRIFTSERVER', 'HBASERESTSERVER']:
+        #    cdh.create_service_role(service, role_type, random.choice(hosts))
 
         for role_type in ['GATEWAY']:
             for host in management.get_hosts(include_cm_host=(role_type == 'GATEWAY')):
