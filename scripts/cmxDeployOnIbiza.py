@@ -187,11 +187,11 @@ def setup_zookeeper():
                 rcg.update_config({"maxClientCnxns": "1024"})
                 # Pick 3 hosts and deploy Zookeeper Server role
                 # mingrui change install on primary, secondary, and CM
-                print cmhost[0]
+                
                 print cmhost
                 print [x for x in hosts if x.id == 0 ][0]
                 print [x for x in hosts if x.id == 1 ][0]
-                cdh.create_service_role(service, rcg.roleType, cmhost[0])
+                cdh.create_service_role(service, rcg.roleType, cmhost)
                 cdh.create_service_role(service, rcg.roleType, [x for x in hosts if x.id == 0 ][0])
                 cdh.create_service_role(service, rcg.roleType, [x for x in hosts if x.id == 1 ][0])
 
