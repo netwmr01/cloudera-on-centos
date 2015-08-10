@@ -15,7 +15,7 @@
     "value": "defaultDnsNamePrefix"
   },
   "region": {
-    "value": "West US"
+    "value": "japanwest"
   },
   "storageAccountType": {
     "value": "Standard_LRS"

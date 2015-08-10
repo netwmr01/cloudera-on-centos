@@ -269,21 +269,9 @@
           "vmSize": "[parameters('vmSpec').vmSize]"
         },
         "osProfile": {
-          "computername": "[reference(concat(variables('publicIPAddressName'), copyIndex())).dnsSettings.fqdn]",
+          "computername": "[concat(variables('vmName'), copyIndex())]",
           "adminUsername": "[parameters('vmSpec').adminUserName]",
           "adminPassword": "[parameters('vmSpec').adminPassword]",
-          "secrets": [
-            {
-              "sourceVault": {
-                "id": "[parameters('vmSpec').keyVaultResourceId]"
-              },
-              "vaultCertificates": [
-                {
-                  "certificateUrl": "[parameters('vmSpec').keyUri]"
-                }
-              ]
-            }
-          ],
           "linuxConfiguration": {
             "disablePasswordAuthentication": "false"
           }
@@ -292,7 +280,7 @@
           "imageReference": {
             "publisher": "OpenLogic",
             "offer": "CentOS",
-            "sku": "6.5",
+            "sku": "6.6",
             "version": "latest"
           },
           "osDisk": {

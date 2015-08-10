@@ -18,41 +18,42 @@
     },
     "storageAccountPrefix": {
       "type": "string",
-      "defaultValue": "defaultStorageAccountPrefix",
+      "defaultValue": "storageaccountprefix",
       "metadata": {
         "description": "Unique namespace for the Storage Account where the Virtual Machine's disks will be placed"
       }
     },
     "dnsNamePrefix": {
       "type": "string",
-      "defaultValue": "defaultDnsNamePrefix",
+      "defaultValue": "dnsnameprefix",
       "metadata": {
         "description": "Unique public dns name where the Virtual Machines will be exposed"
       }
     },
     "region": {
       "type": "string",
+      "defaultValue": "japanwest",
       "metadata": {
         "description": "Location where resources will be provisioned"
       }
     },
     "storageAccountType": {
       "type": "string",
-      "defaultValue": "Standard_LRS",
+      "defaultValue": "Premium_LRS",
       "metadata": {
         "description": "The type of the Storage Account to be created (Default to Standard_LRS)"
       }
     },
     "virtualNetworkName": {
       "type": "string",
-      "defaultValue": "clouderaVnet",
+      "defaultValue": "clouderavnet",
       "metadata": {
         "description": "The name of the virtual network provisioned for the deployment"
       }
     },
     "subnetName": {
       "type": "string",
-      "defaultValue": "clouderaSubnet",
+      "defaultValue": "clouderasubnet",
       "metadata": {
         "description": "Subnet name for the virtual network where resources will be provisioned"
       }
@@ -98,35 +99,14 @@
     },
     "vmSize": {
       "type": "string",
-      "defaultValue": "Standard_D14",
+      "defaultValue": "Standard_DS14",
       "metadata": {
         "description": "The size of the VMs deployed in the cluster (Defaults to Standard_D14)"
-      }
-    },
-    "keyVaultResourceGroup": {
-      "type": "string",
-      "defaultValue": "AzureRM-Util",
-      "metadata": {
-        "description": "The resource group containing the key vault which provides the private key used for SSH login.  See the readme for details."
-      }
-    },
-    "keyVaultName": {
-      "type": "string",
-      "defaultValue": "AzureRM-Keys",
-      "metadata": {
-        "description": "The name of the key vault which provides the private key used for SSH login.  See the readme for details."
-      }
-    },
-    "keyUri": {
-      "type": "string",
-      "defaultValue": "https://azurerm-keys.vault.azure.net/secrets/sshKey/29a10ecf43b64c7ab7eace8866d64597",
-      "metadata": {
-        "description": "The url of the private key used for SSH login.  See the readme for details."
       }
     }
   },
   "variables": {
-    "scriptsUri": "https://raw.githubusercontent.com/Azure/azure-quickstart-templates/master/cloudera-on-centos",
+    "scriptsUri": "https://raw.githubusercontent.com/netwmr01/cloudera-on-centos/master",
     "storageAccount": {
       "prefix": "[parameters('storageAccountPrefix')]",
       "type": "[parameters('storageAccountType')]"
@@ -147,8 +127,6 @@
       "privateIPAddressPrefix": "[parameters('nodeAddressPrefix')]",
       "adminUserName": "[parameters('adminUserName')]",
       "adminPassword": "[parameters('adminPassword')]",
-      "keyVaultResourceId": "[resourceId(parameters('keyVaultResourceGroup'), 'Microsoft.KeyVault/vaults', parameters('keyVaultName'))]",
-      "keyUri": "[parameters('keyUri')]",
       "nameNodeASName": "[concat(parameters('dnsNamePrefix'), '-nnAS')]",
       "dataNodeASName": "[concat(parameters('dnsNamePrefix'), '-dnAS')]"
     },
