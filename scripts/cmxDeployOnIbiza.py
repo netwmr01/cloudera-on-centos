@@ -781,8 +781,9 @@ def setup_impala():
         # Service-Wide
         service.update_config(cdh.dependencies_for(service))
 
+        cmhost= management.get_cmhost()
         for role_type in ['CATALOGSERVER', 'STATESTORE']:
-            cdh.create_service_role(service, role_type, random.choice(hosts))
+            cdh.create_service_role(service, role_type, cmhost)
 
         # Install ImpalaD
         head_node_1_host_id = [host for host in hosts if host.id == 0][0]
