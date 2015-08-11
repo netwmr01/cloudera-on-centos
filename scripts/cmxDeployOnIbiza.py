@@ -1482,7 +1482,7 @@ class ServiceActions:
         # Extended dependence list, adding the optional ones as well
         if service.type == 'HUE':
             dependency_list.extend(['hbase_service', 'solr_service', 'sqoop_service',
-                                    'impala_service', 'hue_hbase_thrift'])
+                                    'impala_service'])
         if service.type in ['HIVE', 'HDFS', 'HUE', 'HBASE', 'OOZIE', 'MAPREDUCE', 'YARN']:
             dependency_list.append('zookeeper_service')
         if service.type in ['HIVE']:
