@@ -1467,8 +1467,7 @@ class ServiceActions:
         """
         service_config = {}
         config_types = {"hue_webhdfs": ['NAMENODE', 'HTTPFS'], "hdfs_service": "HDFS", "sentry_service": "SENTRY",
-                        "zookeeper_service": "ZOOKEEPER", "hbase_service": "HBASE",
-                        "hue_hbase_thrift": "HBASETHRIFTSERVER", "solr_service": "SOLR",
+                        "zookeeper_service": "ZOOKEEPER", "hbase_service": "HBASE", "solr_service": "SOLR",
                         "hive_service": "HIVE", "sqoop_service": "SQOOP",
                         "impala_service": "IMPALA", "oozie_service": "OOZIE",
                         "mapreduce_yarn_service": ['MAPREDUCE', 'YARN'], "yarn_service": "YARN"}
@@ -1481,7 +1480,7 @@ class ServiceActions:
 
         # Extended dependence list, adding the optional ones as well
         if service.type == 'HUE':
-            dependency_list.extend(['hbase_service', 'solr_service', 'sqoop_service',
+            dependency_list.extend(['sqoop_service',
                                     'impala_service'])
         if service.type in ['HIVE', 'HDFS', 'HUE', 'HBASE', 'OOZIE', 'MAPREDUCE', 'YARN']:
             dependency_list.append('zookeeper_service')
@@ -1743,7 +1742,7 @@ def main():
     log("setup_components")
     setup_zookeeper()
     setup_hdfs()
-    setup_hbase()
+    #setup_hbase()
     #setup_solr()
     #setup_ks_indexer()
     setup_yarn()
