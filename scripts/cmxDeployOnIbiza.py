@@ -1485,16 +1485,16 @@ class ServiceActions:
                                     'impala_service'])
         if service.type in ['HIVE', 'HDFS', 'HUE', 'HBASE', 'OOZIE', 'MAPREDUCE', 'YARN']:
             dependency_list.append('zookeeper_service')
-        if service.type in ['HIVE']:
-            dependency_list.append('sentry_service')
+#        if service.type in ['HIVE']:
+#            dependency_list.append('sentry_service')
         if service.type == 'OOZIE':
             dependency_list.append('hive_service')
-        if service.type in ['FLUME', 'IMPALA']:
-            dependency_list.append('hbase_service')
+#        if service.type in ['FLUME', 'IMPALA']:
+#            dependency_list.append('hbase_service')
         if service.type in ['FLUME', 'SPARK', 'SENTRY']:
             dependency_list.append('hdfs_service')
-        if service.type == 'FLUME':
-            dependency_list.append('solr_service')
+#        if service.type == 'FLUME':
+#            dependency_list.append('solr_service')
 
         for key in dependency_list:
             if key == "hue_webhdfs":
