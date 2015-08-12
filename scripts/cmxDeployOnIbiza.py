@@ -1583,11 +1583,12 @@ def parse_options():
                 cmx_config_options[option.dest] = [socket.gethostbyname(x) for x in value.split(',')]
         elif option.dest == 'cm_server':
             print "switch %s value check: %s" % (opt_str, value)
-            s = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
+
             cmx_config_options[option.dest] = socket.gethostbyname(value) if \
                 hostname_resolves(value) else exit(1)
             retry_count = 5
             while retry_count > 0:
+                s = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
                 if not s.connect_ex((socket.gethostbyname(value), 7180)) == 0:
                     print "Cloudera Manager Server is not started on %s " % value
                     s.close()
