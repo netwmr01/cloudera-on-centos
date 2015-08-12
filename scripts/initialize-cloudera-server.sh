@@ -107,7 +107,7 @@ sudo -u postgres psql -c"CREATE DATABASE navms OWNER navms ENCODING 'UTF8';"
 
 sudo -u postgres psql -c"ALTER DATABASE Metastore SET standard_conforming_strings = off;"
 
-/usr/share/cmf/schema/scm_prepare_database.sh postgresql scm scm scm
+/usr/share/cmf/schema/scm_prepare_database.sh postgresql scm scm scm >> /tmp/initialize-cloudera-server.log 2>> /tmp/initialize-cloudera-server.err
 
 log "finished external DB"
 #######################################################################################################################
