@@ -1586,9 +1586,17 @@ def parse_options():
             s = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
             cmx_config_options[option.dest] = socket.gethostbyname(value) if \
                 hostname_resolves(value) else exit(1)
-            if not s.connect_ex((socket.gethostbyname(value), 7180)) == 0:
-                print "Cloudera Manager Server is not started on %s " % value
-                s.close()
+            retry_count = 5
+            while retry_count > 0:
+                if not s.connect_ex((socket.gethostbyname(value), 7180)) == 0:
+                    print "Cloudera Manager Server is not started on %s " % value
+                    s.close()
+                    sleep(60)
+                else:
+                    break
+                retry_count -= 1
+            if retry_count == 0:
+                print "Couldn't connect to Cloudera Manager, exiting"
                 exit(1)
         elif option.dest == 'ssh_private_key':
             with open(value, 'r') as f:
