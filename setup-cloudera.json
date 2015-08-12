@@ -22,14 +22,7 @@
     },
     "fqdn": {
       "type": "string"
-    },
-    "nnCount": {
-      "type": "int"
-    },
-    "dnCount": {
-      "type": "int"
     }
-
   },
   "resources": [
     {
