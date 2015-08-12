@@ -63,7 +63,7 @@ do
 done
 if [ $n -ge 5 ]; then log "scp error $remote, exiting..." & exit 1; fi
 
-#######
+#######################################################################################################################
 log "installing external DB"
 echo "export LANGUAGE=en_US.UTF-8" >> ~/.bashrc
 echo "export LANG=en_US.UTF-8" >> ~/.bashrc
@@ -110,7 +110,7 @@ sudo -u postgres psql -c"ALTER DATABASE Metastore SET standard_conforming_string
 /usr/share/cmf/schema/scm_prepare_database.sh postgresql scm scm scm
 
 log "finished external DB"
-#######
+#######################################################################################################################
 
 log "start cloudera-scm-server services"
 #service cloudera-scm-server-db start >> /tmp/initialize-cloudera-server.log
