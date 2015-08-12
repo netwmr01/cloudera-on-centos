@@ -53,7 +53,7 @@
     },
     {
       "type": "Microsoft.Compute/virtualMachines/extensions",
-      "name": "[concat(parameters('dnsNamePrefix'), '-nn', copyIndex(), '/reboot')]",
+      "name": "[concat(parameters('dnsNamePrefix'), '-nn', copyIndex(), '/clouderannreboot')]",
       "apiVersion": "2015-05-01-preview",
       "location": "[parameters('region')]",
       "copy": {
@@ -74,7 +74,7 @@
     },
     {
       "type": "Microsoft.Compute/virtualMachines/extensions",
-      "name": "[concat(parameters('dnsNamePrefix'), '-dn', copyIndex(), '/reboot')]",
+      "name": "[concat(parameters('dnsNamePrefix'), '-dn', copyIndex(), '/clouderadnreboot')]",
       "apiVersion": "2015-05-01-preview",
       "location": "[parameters('region')]",
       "copy": {
