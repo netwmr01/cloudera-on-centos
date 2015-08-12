@@ -1,7 +1,6 @@
 #!/usr/bin/env python
 #
-__author__ = 'Michalis'
-__version__ = '0.11.2803'
+
 
 import socket
 import re
@@ -252,15 +251,15 @@ def setup_hdfs():
             if rcg.roleType == "NAMENODE":
                 # hdfs-NAMENODE - Default Group
                 rcg.update_config({"dfs_name_dir_list": dfs_name_dir_list,
-                                   "namenode_java_heapsize": "1073741824",
-                                   "dfs_namenode_handler_count": "35",
-                                   "dfs_namenode_service_handler_count": "35",
+                                   "namenode_java_heapsize": "1677058304",
+                                   "dfs_namenode_handler_count": "70",
+                                   "dfs_namenode_service_handler_count": "70",
                                    "dfs_namenode_servicerpc_address": "8022"})
                 cdh.create_service_role(service, rcg.roleType, [x for x in hosts if x.id == 0][0])
             if rcg.roleType == "SECONDARYNAMENODE":
                 # hdfs-SECONDARYNAMENODE - Default Group
                 rcg.update_config({"fs_checkpoint_dir_list": dfs_snn_dir_list,
-                                   "secondary_namenode_java_heapsize": "1073741824"})
+                                   "secondary_namenode_java_heapsize": "1677058304"})
                 # chose a server that it's not NN, easier to enable HDFS-HA later
                 secondary_nn =  [x for x in hosts if x.id == 1 ][0]
 
