@@ -22,7 +22,14 @@
     },
     "fqdn": {
       "type": "string"
+    },
+    "nnCount": {
+      "type": "int"
+    },
+    "dnCount": {
+      "type": "int"
     }
+
   },
   "resources": [
     {
@@ -41,6 +48,48 @@
             "[concat(parameters('scriptsUri'), '/scripts/cmxDeployOnIbiza.py')]"
           ],
           "commandToExecute": "[concat('sh bootstrap-cloudera.sh \"', parameters('networkSpec').privateIPPrefix, '\" \"', parameters('dnsNamePrefix'), '\" \"', parameters('fqdn'), '\" ', parameters('clusterSpec').nameNodeCount, ' ', parameters('clusterSpec').dataNodeCount, ' \"', parameters('vmSpec').adminUserName, '\" \"', parameters('clusterSpec').highAvailability, '\" \"', parameters('vmSpec').adminPassword, '\" >> /home/$ADMINUSER/bootstrap-cloudera.log 2>&1')]"
+        }
+      }
+    },
+    {
+      "type": "Microsoft.Compute/virtualMachines/extensions",
+      "name": "[concat(parameters('dnsNamePrefix'), '-nn', copyIndex(), '/reboot')]",
+      "apiVersion": "2015-05-01-preview",
+      "location": "[parameters('region')]",
+      "copy": {
+        "name": "namenodeLoop",
+        "count": "[parameters('nnCount')]"
+      },
+      "dependsOn": [
+        "[concat('Microsoft.Compute/virtualMachines/', parameters('dnsNamePrefix'), '-nn0', '/extensions/', '/prepareDisks')]"
+      ],
+      "properties": {
+        "publisher": "Microsoft.OSTCExtensions",
+        "type": "CustomScriptForLinux",
+        "typeHandlerVersion": "1.2",
+        "settings": {
+          "commandToExecute": "reboot now"
+        }
+      }
+    },
+    {
+      "type": "Microsoft.Compute/virtualMachines/extensions",
+      "name": "[concat(parameters('dnsNamePrefix'), '-dn', copyIndex(), '/reboot')]",
+      "apiVersion": "2015-05-01-preview",
+      "location": "[parameters('region')]",
+      "copy": {
+        "name": "datanodeLoop",
+        "count": "[parameters('dnCount')]"
+      },
+      "dependsOn": [
+        "[concat('Microsoft.Compute/virtualMachines/', parameters('dnsNamePrefix'), '-nn0', '/extensions/', '/prepareDisks')]"
+      ],
+      "properties": {
+        "publisher": "Microsoft.OSTCExtensions",
+        "type": "CustomScriptForLinux",
+        "typeHandlerVersion": "1.2",
+        "settings": {
+          "commandToExecute": "reboot now"
         }
       }
     }
