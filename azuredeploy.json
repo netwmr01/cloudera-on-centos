@@ -284,6 +284,12 @@
           },
           "fqdn": {
             "value": "[reference('name-node').outputs.fqdn.value]"
+          },
+          "nnCount": {
+            "value": "[variables('clusterSpec').nameNodeCount]"
+          },
+          "dnCount": {
+            "value": "[variables('clusterSpec').dataNodeCount]"
           }
         }
       }
