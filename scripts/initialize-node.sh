@@ -17,6 +17,7 @@ NAMESUFFIX=$3
 NAMENODES=$4
 DATANODES=$5
 ADMINUSER=$6
+DISKOPTION=$7
 
 # Converts a domain like machine.domain.com to domain.com by removing the machine name
 NAMESUFFIX=`echo $NAMESUFFIX | sed 's/^[^.]*\.//'`
@@ -53,8 +54,22 @@ IFS=${OIFS}
 sed -i '/Defaults[[:space:]]\+!*requiretty/s/^/#/' /etc/sudoers
 echo "$ADMINUSER ALL=(ALL) NOPASSWD: ALL" >> /etc/sudoers
 
+if [ $# -eq 1 ]
+then
+nl $1
+else
+nl /dev/stdin
+fi
+
 # Mount and format the attached disks
-sh ./prepareDisks.sh
+if [ $DISKOPTION == "mn" ]
+then
+  sh ./prepare-masternode-disks.sh
+else
+  sh ./prepare-datanode-disks.sh
+fi
+
+
 
 echo "Done preparing disks.  Now ls -la looks like this:"
 ls -la /
