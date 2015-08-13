@@ -1596,7 +1596,7 @@ def parse_options():
                     break
                 retry_count -= 1
             if retry_count == 0:
-                print "Couldn't connect to Cloudera Manager, exiting"
+                print "Couldn't connect to Cloudera Manager after 5 minutes, exiting"
                 exit(1)
         elif option.dest == 'ssh_private_key':
             with open(value, 'r') as f:
