@@ -87,25 +87,25 @@ sudo service postgresql restart
 sudo -u postgres psql -c"CREATE ROLE scm LOGIN PASSWORD 'scm';"
 sudo -u postgres psql -c"CREATE DATABASE scm OWNER scm ENCODING 'UTF8';"
 
-sudo -u postgres psql -c"CREATE ROLE amon LOGIN PASSWORD 'amon_password';"
-sudo -u postgres psql -c"CREATE DATABASE amon OWNER amon ENCODING 'UTF8';"
+#sudo -u postgres psql -c"CREATE ROLE amon LOGIN PASSWORD 'amon_password';"
+#sudo -u postgres psql -c"CREATE DATABASE amon OWNER amon ENCODING 'UTF8';"
 
-sudo -u postgres psql -c"CREATE ROLE rman LOGIN PASSWORD 'rman_password';"
-sudo -u postgres psql -c"CREATE DATABASE rman OWNER rman ENCODING 'UTF8';"
+#sudo -u postgres psql -c"CREATE ROLE rman LOGIN PASSWORD 'rman_password';"
+#sudo -u postgres psql -c"CREATE DATABASE rman OWNER rman ENCODING 'UTF8';"
 
-sudo -u postgres psql -c"CREATE ROLE hive LOGIN PASSWORD 'hive_password';"
-sudo -u postgres psql -c"CREATE DATABASE metstore OWNER hive ENCODING 'UTF8';"
+#sudo -u postgres psql -c"CREATE ROLE hive LOGIN PASSWORD 'hive_password';"
+#sudo -u postgres psql -c"CREATE DATABASE metstore OWNER hive ENCODING 'UTF8';"
 
-sudo -u postgres psql -c"CREATE ROLE sentry LOGIN PASSWORD 'sentry_password';"
-sudo -u postgres psql -c"CREATE DATABASE sentry OWNER sentry ENCODING 'UTF8';"
+#sudo -u postgres psql -c"CREATE ROLE sentry LOGIN PASSWORD 'sentry_password';"
+#sudo -u postgres psql -c"CREATE DATABASE sentry OWNER sentry ENCODING 'UTF8';"
 
-sudo -u postgres psql -c"CREATE ROLE nav LOGIN PASSWORD 'nav_password';"
-sudo -u postgres psql -c"CREATE DATABASE nav OWNER nav ENCODING 'UTF8';"
+#sudo -u postgres psql -c"CREATE ROLE nav LOGIN PASSWORD 'nav_password';"
+#sudo -u postgres psql -c"CREATE DATABASE nav OWNER nav ENCODING 'UTF8';"
 
-sudo -u postgres psql -c"CREATE ROLE navms LOGIN PASSWORD 'navms_password';"
-sudo -u postgres psql -c"CREATE DATABASE navms OWNER navms ENCODING 'UTF8';"
+#sudo -u postgres psql -c"CREATE ROLE navms LOGIN PASSWORD 'navms_password';"
+#sudo -u postgres psql -c"CREATE DATABASE navms OWNER navms ENCODING 'UTF8';"
 
-sudo -u postgres psql -c"ALTER DATABASE Metastore SET standard_conforming_strings = off;"
+#sudo -u postgres psql -c"ALTER DATABASE Metastore SET standard_conforming_strings = off;"
 
 /usr/share/cmf/schema/scm_prepare_database.sh postgresql scm scm scm >> /tmp/initialize-cloudera-server.log 2>> /tmp/initialize-cloudera-server.err
 
