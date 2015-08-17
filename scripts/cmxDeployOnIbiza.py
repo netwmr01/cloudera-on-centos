@@ -1190,7 +1190,7 @@ class ManagementActions:
         # now configure each role
         for group in [x for x in self._service.get_all_role_config_groups() if x.roleType in self._role_list]:
             if group.roleType == "ACTIVITYMONITOR":
-                group.update_config({"firehose_database_host": "%s:7432" % socket.getfqdn(cmx.cm_server),
+                group.update_config({"firehose_database_host": "%s:5432" % socket.getfqdn(cmx.cm_server),
                                      "firehose_database_user": "amon",
                                      "firehose_database_password": cmx.amon_password,
                                      "firehose_database_type": "postgresql",
@@ -1209,11 +1209,23 @@ class ManagementActions:
             elif group.roleType == "NAVIGATORMETADATASERVER" and management.licensed():
                 group.update_config({})
             elif group.roleType == "REPORTSMANAGER" and management.licensed():
-                group.update_config({"headlamp_database_host": "%s:7432" % socket.getfqdn(cmx.cm_server),
+                group.update_config({"headlamp_database_host": "%s:5432" % socket.getfqdn(cmx.cm_server),
                                      "headlamp_database_name": "rman",
                                      "headlamp_database_password": cmx.rman_password,
                                      "headlamp_database_type": "postgresql",
                                      "headlamp_database_user": "rman"})
+            elif group.roleType == "OOZIE":
+                group.update_config({"oozie_database_host": "%s:5432" % socket.getfqdn(cmx.cm_server),
+                                     "oozie_database_name": "oozie",
+                                     "oozie_database_password": cmx.oozie_password,
+                                     "oozie_database_type": "postgresql",
+                                     "oozie_database_user": 'oozie',})
+            elif group.roleType == "HIVE":
+                group.update_config({"hive_metastore_database_host": "%s:5432" % socket.getfqdn(cmx.cm_server),
+                                     "hive_metastore_database_name": "metastore",
+                                     "oozie_database_password": cmx.hive_password,
+                                     "oozie_database_type": "postgresql",
+                                     "oozie_database_user": 'hive',})
 
     @classmethod
     def licensed(cls):
@@ -1266,7 +1278,7 @@ class ManagementActions:
     @classmethod
     def get_mgmt_password(cls, role_type):
         """
-        Get password for "ACTIVITYMONITOR', 'REPORTSMANAGER', 'NAVIGATOR"
+        Get password for "ACTIVITYMONITOR', 'REPORTSMANAGER', 'NAVIGATOR", "OOZIE", "HIVEMETASTORESERVER"
         :param role_type:
         :return:
         """
@@ -1282,8 +1294,8 @@ class ManagementActions:
                 print "Unable to open file %s." % file_path
 
         # role_type expected to be in
-        # "ACTIVITYMONITOR', 'REPORTSMANAGER', 'NAVIGATOR"
-        if role_type in ['ACTIVITYMONITOR', 'REPORTSMANAGER', 'NAVIGATOR']:
+        # ACTIVITYMONITOR, REPORTSMANAGER, NAVIGATOR, OOZIE, HIVEMETASTORESERVER
+        if role_type in ['ACTIVITYMONITOR', 'REPORTSMANAGER', 'NAVIGATOR','OOZIE','HIVEMETASTORESERVER']:
             idx = "com.cloudera.cmf.%s.db.password=" % role_type
             match = [s.rstrip('\n') for s in contents if idx in s][0]
             mgmt_password = match[match.index(idx) + len(idx):]
@@ -1690,6 +1702,8 @@ def parse_options():
     else:
         cmx_config_options['amon_password'] = management.get_mgmt_password("ACTIVITYMONITOR")
         cmx_config_options['rman_password'] = management.get_mgmt_password("REPORTSMANAGER")
+        cmx_config_options['oozie_password'] = management.get_mgmt_password("OOZIE")
+        cmx_config_options['hive_password'] = management.get_mgmt_password("HIVEMETASTORESERVER")
 
     cmx = type('', (), cmx_config_options)
     check = ActiveCommands()

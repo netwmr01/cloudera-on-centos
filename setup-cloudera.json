@@ -38,7 +38,8 @@
           "fileUris": [
             "[concat(parameters('scriptsUri'), '/scripts/bootstrap-cloudera.sh')]",
             "[concat(parameters('scriptsUri'), '/scripts/initialize-cloudera-server.sh')]",
-            "[concat(parameters('scriptsUri'), '/scripts/cmxDeployOnIbiza.py')]"
+            "[concat(parameters('scriptsUri'), '/scripts/cmxDeployOnIbiza.py')]",
+            "[concat(parameters('scriptsUri'), '/scripts/install-postgresql.sh')]"
           ],
           "commandToExecute": "[concat('sh bootstrap-cloudera.sh \"', parameters('networkSpec').privateIPPrefix, '\" \"', parameters('dnsNamePrefix'), '\" \"', parameters('fqdn'), '\" ', parameters('clusterSpec').nameNodeCount, ' ', parameters('clusterSpec').dataNodeCount, ' \"', parameters('vmSpec').adminUserName, '\" \"', parameters('clusterSpec').highAvailability, '\" \"', parameters('vmSpec').adminPassword, '\" >> /home/$ADMINUSER/bootstrap-cloudera.log 2>&1')]"
         }
