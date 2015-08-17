@@ -322,7 +322,6 @@
           "sourceImage":{
             "id":"/62f99ce6-a09e-4461-a1f6-fea7078f0567/services/images/62f99ce6-a09e-4461-a1f6-fea7078f0567__Image__CentOS66"
           },
-          "destinationVhdsContainer":"[concat('http://', variables('storageAccountName'), copyIndex(), '.blob.core.windows.net/vhds/')]",
           "dataDisks": [
             {
               "name": "datadisk0",
