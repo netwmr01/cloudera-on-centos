@@ -657,9 +657,9 @@ def setup_hive():
         # hive_metastore_database_host: Assuming embedded DB is running from where embedded-db is located.
         service_config = {"hive_metastore_database_host": socket.getfqdn(cmx.cm_server),
                           "hive_metastore_database_user": "hive",
-                          "hive_metastore_database_name": "hive",
-                          "hive_metastore_database_password": "hive",
-                          "hive_metastore_database_port": "7432",
+                          "hive_metastore_database_name": "metastore",
+                          "hive_metastore_database_password": cmx.hive_password,
+                          "hive_metastore_database_port": "5432",
                           "hive_metastore_database_type": "postgresql"}
         service_config.update(cdh.dependencies_for(service))
         service.update_config(service_config)
@@ -1001,7 +1001,7 @@ def setup_sentry():
                           "sentry_server_database_user": "sentry",
                           "sentry_server_database_name": "sentry",
                           "sentry_server_database_password": "cloudera",
-                          "sentry_server_database_port": "7432",
+                          "sentry_server_database_port": "5432",
                           "sentry_server_database_type": "postgresql"}
 
         service_config.update(cdh.dependencies_for(service))
@@ -1047,9 +1047,9 @@ def setup_easy():
     service = cdh.get_service_type('HIVE')
     service_config = {"hive_metastore_database_host": socket.getfqdn(cmx.cm_server),
                       "hive_metastore_database_user": "hive",
-                      "hive_metastore_database_name": "hive",
-                      "hive_metastore_database_password": "hive",
-                      "hive_metastore_database_port": "7432",
+                      "hive_metastore_database_name": "metastore",
+                      "hive_metastore_database_password": cmx.hive_password,
+                      "hive_metastore_database_port": "5432",
                       "hive_metastore_database_type": "postgresql"}
     service_config.update(cdh.dependencies_for(service))
     service.update_config(service_config)
@@ -1220,12 +1220,6 @@ class ManagementActions:
                                      "oozie_database_password": cmx.oozie_password,
                                      "oozie_database_type": "postgresql",
                                      "oozie_database_user": 'oozie',})
-            elif group.roleType == "HIVE":
-                group.update_config({"hive_metastore_database_host": "%s:5432" % socket.getfqdn(cmx.cm_server),
-                                     "hive_metastore_database_name": "metastore",
-                                     "oozie_database_password": cmx.hive_password,
-                                     "oozie_database_type": "postgresql",
-                                     "oozie_database_user": 'hive',})
 
     @classmethod
     def licensed(cls):

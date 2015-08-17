@@ -424,7 +424,7 @@ echo "# Accept connections from all hosts" >> $DATA_DIR/pg_hba.conf
 #source ~/.bashrc
 
 
-put this line to the top of the ident to allow all local access
+#put this line to the top of the ident to allow all local access
 sed -i '/host.*127.*ident/i \
 host    all         all         127.0.0.1/32          md5  \ ' $DATA_DIR/pg_hba.conf
 #append this line as well, need both to allow access
