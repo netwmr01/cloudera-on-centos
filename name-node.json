@@ -181,6 +181,48 @@
               "priority": 109,
               "direction": "Inbound"
             }
+          },
+          {
+            "name": "IMPALA.Statestore",
+            "properties": {
+              "description": "Allows Impala statestore traffic",
+              "protocol": "Tcp",
+              "sourcePortRange": "*",
+              "destinationPortRange": "25010",
+              "sourceAddressPrefix": "*",
+              "destinationAddressPrefix": "*",
+              "access": "Allow",
+              "priority": 110,
+              "direction": "Inbound"
+            }
+          },
+          {
+            "name": "IMPALA.Catalog.Server",
+            "properties": {
+              "description": "Allows Impala CatalogServer traffic",
+              "protocol": "Tcp",
+              "sourcePortRange": "*",
+              "destinationPortRange": "25020",
+              "sourceAddressPrefix": "*",
+              "destinationAddressPrefix": "*",
+              "access": "Allow",
+              "priority": 111,
+              "direction": "Inbound"
+            }
+          },
+          {
+            "name": "NTP",
+            "properties": {
+              "description": "Allows NTP traffic",
+              "protocol": "Udp",
+              "sourcePortRange": "*",
+              "destinationPortRange": "123",
+              "sourceAddressPrefix": "*",
+              "destinationAddressPrefix": "*",
+              "access": "Allow",
+              "priority": 112,
+              "direction": "Inbound"
+            }
           }
         ]
       }
