@@ -221,20 +221,10 @@
           }
         },
         "storageProfile": {
-          "imageReference": {
-            "publisher": "OpenLogic",
-            "offer": "CentOS",
-            "sku": "6.6",
-            "version": "latest"
+          "sourceImage":{
+            "id":"/62f99ce6-a09e-4461-a1f6-fea7078f0567/services/images/62f99ce6-a09e-4461-a1f6-fea7078f0567__Image__CentOS66"
           },
-          "osDisk": {
-            "name": "osdisk",
-            "vhd": {
-              "uri": "[concat('http://', copyIndex(), variables('storageAccountName'), '.blob.core.windows.net/vhds/', variables('vmName'), copyIndex(), '.vhd')]"
-            },
-            "caching": "ReadWrite",
-            "createOption": "FromImage"
-          },
+          "destinationVhdsContainer":"[concat('http://', variables('storageAccountName'), copyIndex(), '.blob.core.windows.net/vhds/')]",
           "dataDisks": [
             {
               "name": "datadisk0",
