@@ -221,11 +221,16 @@
           }
         },
         "storageProfile": {
+          "imageReference": {
+            "publisher": "OpenLogic",
+            "offer": "CentOS",
+            "sku": "6.6",
+            "version": "latest"
+          },
           "osDisk": {
             "name": "osdisk",
-            "osType": "linux",
             "vhd": {
-              "uri": "https://dwaitesingdiskstorage.blob.core.windows.net/vhdrepo/CentOS66.vhd"
+              "uri": "[concat('http://', copyIndex(), variables('storageAccountName'), '.blob.core.windows.net/vhds/', variables('vmName'), copyIndex(), '.vhd')]"
             },
             "caching": "ReadWrite",
             "createOption": "FromImage"
