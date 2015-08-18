@@ -55,10 +55,10 @@ sed -i '/Defaults[[:space:]]\+!*requiretty/s/^/#/' /etc/sudoers
 echo "$ADMINUSER ALL=(ALL) NOPASSWD: ALL" >> /etc/sudoers
 
 # Mount and format the attached disks base on node type
-if [ "$NODETYPE" == "MASTERNODE" ]
+if [ "$NODETYPE" == "masternode" ]
 then
   bash ./prepare-masternode-disks.sh
-elif [ "$NODETYPE" == "DATANODE" ]
+elif [ "$NODETYPE" == "datanode" ]
 then
   bash ./prepare-datanode-disks.sh
 else
