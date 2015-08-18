@@ -227,7 +227,8 @@
             "vhd": {
               "uri": "https://dwaitesingdiskstorage.blob.core.windows.net/vhdrepo/CentOS66.vhd"
             },
-            "caching": "ReadWrite"
+            "caching": "ReadWrite",
+            "createOption": "FromImage"
           },
           "dataDisks": [
             {
