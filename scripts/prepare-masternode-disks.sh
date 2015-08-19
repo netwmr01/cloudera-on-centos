@@ -104,9 +104,10 @@ formatAndMountAllDrives() {
 
 mountDriveForLogCloudera()
 {
-	dirname=/var/log/cloudera
+	dirname=/log/cloudera
 	drivename=/dev/sdc
 	mke2fs -F -t ext4 -b 4096 -E lazy_itable_init=1 -O sparse_super,dir_index,extent,has_journal,uninit_bg -m1 $drivename
+	mkdir /log
 	mkdir $dirname
 	mount -o noatime,barrier=1 -t ext4 $drivename $dirname
 	echo "$drivename   $dirname    ext4   defaults,noatime, barrier=0 0 1" | sudo tee -a /etc/fstab
@@ -122,21 +123,14 @@ mountDriveForZookeeper()
 	echo "$drivename   $dirname    ext4   defaults,noatime, barrier=0 0 1" | sudo tee -a /etc/fstab
 }
 
-mountDriveForData()
-{
-	dirname=/data/
-	drivename=/dev/sde
-	mke2fs -F -t ext4 -b 4096 -E lazy_itable_init=1 -O sparse_super,dir_index,extent,has_journal,uninit_bg -m1 $drivename
-	mkdir $dirname
-	mount -o noatime,barrier=1 -t ext4 $drivename $dirname
-	echo "$drivename   $dirname    ext4   defaults,noatime, barrier=0 0 1" | sudo tee -a /etc/fstab
-}
+
 
 mountDriveForQJN()
 {
 	dirname=/data/qjn
-	drivename=/dev/sdf
+	drivename=/dev/sde
 	mke2fs -F -t ext4 -b 4096 -E lazy_itable_init=1 -O sparse_super,dir_index,extent,has_journal,uninit_bg -m1 $drivename
+	mkdir /data
 	mkdir $dirname
 	mount -o noatime,barrier=1 -t ext4 $drivename $dirname
 	echo "$drivename   $dirname    ext4   defaults,noatime, barrier=0 0 1" | sudo tee -a /etc/fstab
@@ -145,7 +139,7 @@ mountDriveForQJN()
 mountDriveForPostgres()
 {
 	dirname=/var/lib/pgsql
-	drivename=/dev/sdg
+	drivename=/dev/sdf
 	mke2fs -F -t ext4 -b 4096 -E lazy_itable_init=1 -O sparse_super,dir_index,extent,has_journal,uninit_bg -m1 $drivename
 	mkdir $dirname
 	mount -o noatime,barrier=1 -t ext4 $drivename $dirname
@@ -156,7 +150,6 @@ mountMasterBundle()
 {
     mountDriveForLogCloudera
     mountDriveForZookeeper
-    mountDriveForData
     mountDriveForQJN
     mountDriveForPostgres
 }
