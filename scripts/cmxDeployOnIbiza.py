@@ -179,13 +179,17 @@ def setup_zookeeper():
         service = cluster.get_service(service_name)
         hosts = management.get_hosts()
         cmhost= management.get_cmhost()
-        service.update_config({"zookeeper_datadir_autocreate": True,
-                               "zk_server_log_dir": LOG_DIR+"/zookeeper"})
+        service.update_config({"zookeeper_datadir_autocreate": True})
+
+
 
         # Role Config Group equivalent to Service Default Group
         for rcg in [x for x in service.get_all_role_config_groups()]:
             if rcg.roleType == "SERVER":
-                rcg.update_config({"maxClientCnxns": "1024"})
+                rcg.update_config({"maxClientCnxns": "1024",
+                                   "dataLogDir": LOG_DIR+"/zookeeper",
+                                   "dataDir": LOG_DIR+"/zookeeper",
+                                   "zk_server_log_dir": LOG_DIR+"/zookeeper"})
                 # Pick 3 hosts and deploy Zookeeper Server role
                 # mingrui change install on primary, secondary, and CM
                 
