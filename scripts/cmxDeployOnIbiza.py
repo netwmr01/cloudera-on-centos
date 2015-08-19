@@ -809,8 +809,8 @@ def setup_impala():
 
         impalad=service.get_role_config_group("{0}-IMPALAD-BASE".format(service_name))
         impalad.update_config({"log_dir": LOG_DIR+"impalad"})
-        llama=service.get_role_config_group("{0}-LLAMMA-BASE".format(service_name))
-        llama.update_config({"log_dir": LOG_DIR+"impala-llama"})
+        #llama=service.get_role_config_group("{0}-LLAMMA-BASE".format(service_name))
+        #llama.update_config({"log_dir": LOG_DIR+"impala-llama"})
         ss = service.get_role_config_group("{0}-STATESTORE-BASE".format(service_name))
         ss.update_config({"log_dir": LOG_DIR+"/statestore"})
         cs = service.get_role_config_group("{0}-CATALOGSERVER-BASE".format(service_name))
