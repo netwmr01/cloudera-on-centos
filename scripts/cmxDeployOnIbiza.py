@@ -17,7 +17,7 @@ from cm_api.api_client import ApiResource, ApiException
 from cm_api.endpoints.hosts import *
 from cm_api.endpoints.services import ApiServiceSetupInfo, ApiService
 
-
+LOG_DIR='/var/log/cloudera'
 def init_cluster():
     """
     Initialise Cluster
@@ -179,7 +179,8 @@ def setup_zookeeper():
         service = cluster.get_service(service_name)
         hosts = management.get_hosts()
         cmhost= management.get_cmhost()
-        service.update_config({"zookeeper_datadir_autocreate": True})
+        service.update_config({"zookeeper_datadir_autocreate": True,
+                               "zk_server_log_dir": LOG_DIR+"/zookeeper"})
 
         # Role Config Group equivalent to Service Default Group
         for rcg in [x for x in service.get_all_role_config_groups()]:
@@ -255,12 +256,14 @@ def setup_hdfs():
                                    "namenode_java_heapsize": "1677058304",
                                    "dfs_namenode_handler_count": "70",
                                    "dfs_namenode_service_handler_count": "70",
-                                   "dfs_namenode_servicerpc_address": "8022"})
+                                   "dfs_namenode_servicerpc_address": "8022",
+                                   "namenode_log_dir": LOG_DIR+"/hadoop-hdfs"})
                 cdh.create_service_role(service, rcg.roleType, [x for x in hosts if x.id == 0][0])
             if rcg.roleType == "SECONDARYNAMENODE":
                 # hdfs-SECONDARYNAMENODE - Default Group
                 rcg.update_config({"fs_checkpoint_dir_list": dfs_snn_dir_list,
-                                   "secondary_namenode_java_heapsize": "1677058304"})
+                                   "secondary_namenode_java_heapsize": "1677058304",
+                                   "secondarynamenode_log_dir": LOG_DIR+"/hadoop-hdfs"})
                 # chose a server that it's not NN, easier to enable HDFS-HA later
                 secondary_nn =  [x for x in hosts if x.id == 1 ][0]
 
@@ -273,7 +276,8 @@ def setup_hdfs():
                                    "dfs_datanode_data_dir_perm": "755",
                                    "dfs_datanode_du_reserved": "3508717158",
                                    "dfs_datanode_failed_volumes_tolerated": "0",
-                                   "dfs_datanode_max_locked_memory": "1257242624", })                   
+                                   "dfs_datanode_max_locked_memory": "1257242624",
+                                   "datanode_log_dir": LOG_DIR+"/hadoop-hdfs"})
                 
             if rcg.roleType == "GATEWAY":
                 # hdfs-GATEWAY - Default Group
@@ -527,8 +531,8 @@ def setup_yarn():
         # Service-Wide
         service.update_config(cdh.dependencies_for(service))
 
-        # need to move to vhd so it won't get lost
-        default_yarn_dir_list = "/mnt/resource/yarn/nm"
+        # empty list so it won't use ephemeral drive
+        default_yarn_dir_list = ""
         bashCommand="ls -la / | grep data | wc -l > count2.out"
 
         os.system(bashCommand)
@@ -545,11 +549,13 @@ def setup_yarn():
                 # yarn-RESOURCEMANAGER - Default Group
                 rcg.update_config({"resource_manager_java_heapsize": "2000000000",
                                    "yarn_scheduler_maximum_allocation_mb": "2568",
-                                   "yarn_scheduler_maximum_allocation_vcores": "2"})
+                                   "yarn_scheduler_maximum_allocation_vcores": "2",
+                                   "resource_manager_log_dir": LOG_DIR+"/hadoop-yarn"})
                 cdh.create_service_role(service, rcg.roleType, [x for x in hosts if x.id == 0][0])
             if rcg.roleType == "JOBHISTORY":
                 # yarn-JOBHISTORY - Default Group
-                rcg.update_config({"mr2_jobhistory_java_heapsize": "1000000000"})
+                rcg.update_config({"mr2_jobhistory_java_heapsize": "1000000000",
+                                   "mr2_jobhistory_log_dir": LOG_DIR+"/hadoop-mapreduce"})
                 cmhost= management.get_cmhost()
                 cdh.create_service_role(service, rcg.roleType, cmhost)
             if rcg.roleType == "NODEMANAGER":
@@ -558,7 +564,9 @@ def setup_yarn():
                                    "node_manager_java_heapsize": "2000000000",
                                    "yarn_nodemanager_local_dirs": yarn_dir_list,
                                    "yarn_nodemanager_resource_cpu_vcores": "12",
-                                   "yarn_nodemanager_resource_memory_mb": "2568"})
+                                   "yarn_nodemanager_resource_memory_mb": "2568",
+                                   "node_manager_log_dir": LOG_DIR+"/hadoop-yarn",
+                                   "yarn_nodemanager_log_dirs": LOG_DIR+"/hadoop-yarn/container"})
 #                for host in hosts:
 #                    cdh.create_service_role(service, rcg.roleType, host)
             if rcg.roleType == "GATEWAY":
@@ -663,6 +671,11 @@ def setup_hive():
                           "hive_metastore_database_type": "postgresql"}
         service_config.update(cdh.dependencies_for(service))
         service.update_config(service_config)
+
+        hs2 = service.get_role_config_group("{0}-HIVESERVER2-BASE".format(service_name))
+        hs2.update_config({"hive_log_dir": LOG_DIR+"/hive"})
+        hms = service.get_role_config_group("{0}-HIVEMETASTORE-BASE".format(service_name))
+        hms.update_config({"hive_log_dir": LOG_DIR+"/hive"})
         
         
         #install to CM node, mingrui
@@ -781,6 +794,11 @@ def setup_impala():
         # Service-Wide
         service.update_config(cdh.dependencies_for(service))
 
+        ss = service.get_role_config_group("{0}-STATESTORE-BASE".format(service_name))
+        ss.update_config({"log_dir": LOG_DIR+"/statestore"})
+        cs = service.get_role_config_group("{0}-CATALOGSERVER-BASE".format(service_name))
+        cs.update_config({"log_dir": LOG_DIR+"/catalogd"})
+
         cmhost= management.get_cmhost()
         for role_type in ['CATALOGSERVER', 'STATESTORE']:
             cdh.create_service_role(service, role_type, cmhost)
@@ -859,7 +877,7 @@ def setup_hue():
         cmhost= management.get_cmhost()
         for rcg in [x for x in service.get_all_role_config_groups()]:
             if rcg.roleType == "HUE_SERVER":
-                rcg.update_config({})
+                rcg.update_config({"hue_server_log_dir": LOG_DIR+"/hue"})
                 cdh.create_service_role(service, "HUE_SERVER", cmhost)
         # This service is started later on
         # check.status_for_command("Starting Hue Service", service.start())
@@ -1195,7 +1213,8 @@ class ManagementActions:
                                      "firehose_database_password": cmx.amon_password,
                                      "firehose_database_type": "postgresql",
                                      "firehose_database_name": "amon",
-                                     "firehose_heapsize": "215964392"})
+                                     "firehose_heapsize": "215964392",
+                                     "mgmt_log_dir": LOG_DIR+"/cloudera-scm-firefose"})
             elif group.roleType == "ALERTPUBLISHER":
                 group.update_config({})
             elif group.roleType == "EVENTSERVER":
@@ -1213,13 +1232,15 @@ class ManagementActions:
                                      "headlamp_database_name": "rman",
                                      "headlamp_database_password": cmx.rman_password,
                                      "headlamp_database_type": "postgresql",
-                                     "headlamp_database_user": "rman"})
+                                     "headlamp_database_user": "rman",
+                                     "mgmt_log_dir": LOG_DIR+"/cloudera-scm-headlamp"})
             elif group.roleType == "OOZIE":
                 group.update_config({"oozie_database_host": "%s:5432" % socket.getfqdn(cmx.cm_server),
                                      "oozie_database_name": "oozie",
                                      "oozie_database_password": cmx.oozie_password,
                                      "oozie_database_type": "postgresql",
-                                     "oozie_database_user": 'oozie',})
+                                     "oozie_database_user": "oozie",
+                                     "oozie_log_dir": LOG_DIR+"oozie" })
 
     @classmethod
     def licensed(cls):
@@ -1769,7 +1790,7 @@ def main():
     setup_spark_on_yarn()
     setup_hive()
     #setup_sqoop()
-    setup_sqoop_client()
+    #setup_sqoop_client()
     setup_impala()
     setup_oozie()
     setup_hue()
