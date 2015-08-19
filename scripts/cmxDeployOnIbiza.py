@@ -17,7 +17,7 @@ from cm_api.api_client import ApiResource, ApiException
 from cm_api.endpoints.hosts import *
 from cm_api.endpoints.services import ApiServiceSetupInfo, ApiService
 
-LOG_DIR='/var/log/cloudera'
+LOG_DIR='/log/cloudera'
 def init_cluster():
     """
     Initialise Cluster
@@ -161,7 +161,7 @@ def deploy_parcel(parcel_product, parcel_version):
                 break
 
 
-def setup_zookeeper():
+def setup_zookeeper(HA):
     """
     Zookeeper
     > Waiting for ZooKeeper Service to initialize
@@ -190,22 +190,26 @@ def setup_zookeeper():
                                    "dataLogDir": LOG_DIR+"/zookeeper",
                                    "dataDir": LOG_DIR+"/zookeeper",
                                    "zk_server_log_dir": LOG_DIR+"/zookeeper"})
-                # Pick 3 hosts and deploy Zookeeper Server role
+                # Pick 3 hosts and deploy Zookeeper Server role for Zookeeper HA
                 # mingrui change install on primary, secondary, and CM
-                
-                print cmhost
-                print [x for x in hosts if x.id == 0 ][0]
-                print [x for x in hosts if x.id == 1 ][0]
-                cdh.create_service_role(service, rcg.roleType, cmhost)
-                cdh.create_service_role(service, rcg.roleType, [x for x in hosts if x.id == 0 ][0])
-                cdh.create_service_role(service, rcg.roleType, [x for x in hosts if x.id == 1 ][0])
+                if HA:
+                    print cmhost
+                    print [x for x in hosts if x.id == 0 ][0]
+                    print [x for x in hosts if x.id == 1 ][0]
+                    cdh.create_service_role(service, rcg.roleType, cmhost)
+                    cdh.create_service_role(service, rcg.roleType, [x for x in hosts if x.id == 0 ][0])
+                    cdh.create_service_role(service, rcg.roleType, [x for x in hosts if x.id == 1 ][0])
+                #No HA, using POC setup, all service in one master node aka the cm host
+                else:
+                    cdh.create_service_role(service, rcg.roleType, cmhost)
+
 
         # init_zookeeper not required as the API performs this when adding Zookeeper
         # check.status_for_command("Waiting for ZooKeeper Service to initialize", service.init_zookeeper())
         check.status_for_command("Starting ZooKeeper Service", service.start())
 
 
-def setup_hdfs():
+def setup_hdfs(HA):
     """
     HDFS
     > Checking if the name directories of the NameNode are empty. Formatting HDFS only if empty.
@@ -291,8 +295,15 @@ def setup_hdfs():
                 # hdfs-GATEWAY - Default Group
                 rcg.update_config({"dfs_client_use_trash": True})
 
+
     nn_host_id = [host for host in hosts if host.id == 0][0]
-    snn_host_id = [host for host in hosts if host.id == 1][0]    
+    snn_host_id = [host for host in hosts if host.id == 1][0]
+
+    #No HA, using POC setup, all service in one master node aka the cm host
+    if not HA:
+        nn_host_id=management.get_cmhost()
+        snn_host_id=management.get_cmhost()
+
     # print nn_host_id.hostId
     # print snn_host_id.hostId
     for role_type in ['DATANODE']:
@@ -312,6 +323,11 @@ def setup_hdfs():
 
         check.status_for_command("Starting HDFS.", service.start())
         check.status_for_command("Creating HDFS /tmp directory", service.create_hdfs_tmp())
+
+    # Additional HA setting for yarn
+    if HA:
+        setup_hdfs_ha()
+
 
 
 def setup_hbase():
@@ -435,49 +451,6 @@ def setup_ks_indexer():
         # check.status_for_command("Starting Lily HBase Indexer Service", service.start())
 
 
-def setup_spark():
-    """
-    Spark
-    > Execute command CreateSparkUserDirCommand on service Spark
-    > Execute command CreateSparkHistoryDirCommand on service Spark
-    > Execute command SparkUploadJarServiceCommand on service Spark
-    Starting Spark Service
-    :return:
-    """
-    api = ApiResource(server_host=cmx.cm_server, username=cmx.username, password=cmx.password)
-    cluster = api.get_cluster(cmx.cluster_name)
-    service_type = "SPARK"
-    if cdh.get_service_type(service_type) is None:
-        print "> %s" % service_type
-        service_name = "spark"
-        print "Create %s service" % service_name
-        cluster.create_service(service_name, service_type)
-        service = cluster.get_service(service_name)
-        hosts = management.get_hosts()
-
-        # Service-Wide
-        service.update_config(cdh.dependencies_for(service))
-
-        cdh.create_service_role(service, "SPARK_MASTER", [x for x in hosts if x.id == 0][0])
-        cdh.create_service_role(service, "SPARK_HISTORY_SERVER", random.choice(hosts))
-
-        for role_type in ['GATEWAY', 'SPARK_WORKER']:
-            for host in management.get_hosts(include_cm_host=(role_type == 'GATEWAY')):
-                cdh.create_service_role(service, role_type, host)
-
-        # Example of deploy_client_config. Recommended to Deploy Cluster wide client config.
-        # cdh.deploy_client_config_for(service)
-
-        check.status_for_command("Execute command CreateSparkUserDirCommand on service Spark",
-                                 service._cmd('CreateSparkUserDirCommand'))
-        check.status_for_command("Execute command CreateSparkHistoryDirCommand on service Spark",
-                                 service._cmd('CreateSparkHistoryDirCommand'))
-        check.status_for_command("Execute command SparkUploadJarServiceCommand on service Spark",
-                                 service._cmd('SparkUploadJarServiceCommand'))
-
-        # This service is started later on
-        # check.status_for_command("Starting Spark Service", service.start())
-
 
 def setup_spark_on_yarn():
     """
@@ -521,7 +494,7 @@ def setup_spark_on_yarn():
         # check.status_for_command("Starting Spark Service", service.start())
 
 
-def setup_yarn():
+def setup_yarn(HA):
     """
     Yarn
     > Creating MR2 job history directory
@@ -605,6 +578,10 @@ def setup_yarn():
                                  service.create_yarn_node_manager_remote_app_log_dir())
         # This service is started later on
         # check.status_for_command("Starting YARN (MR2 Included) Service", service.start())
+
+        # Additional HA setting for yarn
+    if HA:
+        setup_yarn_ha()
 
 
 def setup_mapreduce():
@@ -766,7 +743,7 @@ def setup_sqoop_client():
         # cdh.deploy_client_config_for(service)
 
 
-def setup_impala():
+def setup_impala(HA):
     """
     Impala
     > Creating Impala user directory
@@ -808,7 +785,7 @@ def setup_impala():
         service.update_config(cdh.dependencies_for(service))
 
         impalad=service.get_role_config_group("{0}-IMPALAD-BASE".format(service_name))
-        impalad.update_config({"log_dir": LOG_DIR+"impalad"})
+        impalad.update_config({"log_dir": LOG_DIR+"/impalad"})
         #llama=service.get_role_config_group("{0}-LLAMMA-BASE".format(service_name))
         #llama.update_config({"log_dir": LOG_DIR+"impala-llama"})
         ss = service.get_role_config_group("{0}-STATESTORE-BASE".format(service_name))
@@ -820,14 +797,21 @@ def setup_impala():
         for role_type in ['CATALOGSERVER', 'STATESTORE']:
             cdh.create_service_role(service, role_type, cmhost)
 
-        # Install ImpalaD
-        head_node_1_host_id = [host for host in hosts if host.id == 0][0]
-        head_node_2_host_id = [host for host in hosts if host.id == 1][0]       
+        if HA:
+            # Install ImpalaD
+            head_node_1_host_id = [host for host in hosts if host.id == 0][0]
+            head_node_2_host_id = [host for host in hosts if host.id == 1][0]
 
-        for host in hosts:
-            # impalad should not be on hn-1 and hn-2
-            if (host.id!=head_node_1_host_id.id and host.id!=head_node_2_host_id.id):
-                cdh.create_service_role(service, "IMPALAD", host)
+            for host in hosts:
+                # impalad should not be on hn-1 and hn-2
+                if (host.id!=head_node_1_host_id.id and host.id!=head_node_2_host_id.id):
+                    cdh.create_service_role(service, "IMPALAD", host)
+        else:
+            # All master services on CM host, install impalad on datanode host
+            for host in hosts:
+                if (host.id!=cmhost.id):
+                    cdh.create_service_role(service, "IMPALAD", host)
+
 
         check.status_for_command("Creating Impala user directory", service.create_impala_user_dir())
         check.status_for_command("Starting Impala Service", service.start())
@@ -1093,6 +1077,7 @@ def setup_easy():
     check.status_for_command("Executing first run command. This might take a while.", cluster.first_run())
 
 
+
 def teardown(keep_cluster=True):
     """
     Teardown the Cluster
@@ -1233,7 +1218,7 @@ class ManagementActions:
                                      "firehose_database_type": "postgresql",
                                      "firehose_database_name": "amon",
                                      "firehose_heapsize": "215964392",
-                                     "mgmt_log_dir": LOG_DIR+"/cloudera-scm-firefose"})
+                                     "mgmt_log_dir": LOG_DIR+"/cloudera-scm-firehose"})
             elif group.roleType == "ALERTPUBLISHER":
                 group.update_config({"mgmt_log_dir": LOG_DIR+"/cloudera-scm-alertpublisher"})
             elif group.roleType == "EVENTSERVER":
@@ -1260,7 +1245,7 @@ class ManagementActions:
                                      "oozie_database_password": cmx.oozie_password,
                                      "oozie_database_type": "postgresql",
                                      "oozie_database_user": "oozie",
-                                     "oozie_log_dir": LOG_DIR+"oozie" })
+                                     "oozie_log_dir": LOG_DIR+"/oozie" })
 
     @classmethod
     def licensed(cls):
@@ -1798,20 +1783,13 @@ def main():
     # Zookeeper, hdfs, HBase, Solr, Spark, Yarn,
     # Hive, Sqoop, Sqoop Client, Impala, Oozie, Hue
     log("setup_components")
-    setup_zookeeper()
-    setup_hdfs()
-    #setup_hbase()
-    #setup_solr()
-    #setup_ks_indexer()
-    setup_yarn()
-    # setup_mapreduce()
-    #setup_spark()
-    #setup_flume()
+    setup_zookeeper(options.highAvailability)
+    setup_hdfs(options.highAvailability)
+    setup_yarn(options.highAvailability)
+    setup_mapreduce()
     setup_spark_on_yarn()
     setup_hive()
-    #setup_sqoop()
-    #setup_sqoop_client()
-    setup_impala()
+    setup_impala(options.highAvailability)
     setup_oozie()
     setup_hue()
 
@@ -1825,9 +1803,9 @@ def main():
     # setup_hdfs_ha()
     # setup_yarn_ha()
         
-    if options.highAvailability:
-        setup_hdfs_ha()
-        setup_yarn_ha()
+    #if options.highAvailability:
+    #    setup_hdfs_ha()
+    #    setup_yarn_ha()
 
     # Deploy GPL Extra Parcel
     # deploy_parcel(parcel_product=cmx.parcel[1]['product'],parcel_version=cmx.parcel[1]['version'])
