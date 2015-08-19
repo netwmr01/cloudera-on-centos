@@ -112,7 +112,7 @@
       "type": "[parameters('storageAccountType')]"
     },
     "clusterTshirtSizeEval": {
-      "nameNodeCount": 3,
+      "nameNodeCount": 1,
       "dataNodeCount": "[parameters('numberOfDataNodes')]",
       "highAvailability": "false"
     },
