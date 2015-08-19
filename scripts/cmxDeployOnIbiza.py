@@ -282,6 +282,10 @@ def setup_hdfs():
                                    "dfs_datanode_failed_volumes_tolerated": "0",
                                    "dfs_datanode_max_locked_memory": "1257242624",
                                    "datanode_log_dir": LOG_DIR+"/hadoop-hdfs"})
+            if rcg.roleType == "FAILOVERCONTROLLER":
+                rcg.update_config({"failover_controller_log_dir": LOG_DIR+"/hadoop-hdfs"})
+            if rcg.roleType == "HTTPFS":
+                rcg.update_config({"httpfs_log_dir": LOG_DIR+"/hadoop-httpfs"})
                 
             if rcg.roleType == "GATEWAY":
                 # hdfs-GATEWAY - Default Group
@@ -495,6 +499,9 @@ def setup_spark_on_yarn():
         service.update_config(cdh.dependencies_for(service))
 
         cmhost= management.get_cmhost()
+
+        soy=service.get_role_config_group("{0}-SPARK_YARN_HISTORY_SERVER-BASE".format(service_name))
+        soy.update_config({"log_dir": LOG_DIR+"/spark"})
         cdh.create_service_role(service, "SPARK_YARN_HISTORY_SERVER",cmhost)
 
         for host in management.get_hosts(include_cm_host=True):
@@ -676,6 +683,8 @@ def setup_hive():
         service_config.update(cdh.dependencies_for(service))
         service.update_config(service_config)
 
+        hcat = service.get_role_config_group("{0}-WEBHCAT-BASE".format(service_name))
+        hcat.update_config({"hcatalog_log_dir": LOG_DIR+"/hcatalog"})
         hs2 = service.get_role_config_group("{0}-HIVESERVER2-BASE".format(service_name))
         hs2.update_config({"hive_log_dir": LOG_DIR+"/hive"})
         hms = service.get_role_config_group("{0}-HIVEMETASTORE-BASE".format(service_name))
@@ -798,6 +807,10 @@ def setup_impala():
         # Service-Wide
         service.update_config(cdh.dependencies_for(service))
 
+        impalad=service.get_role_config_group("{0}-IMPALAD-BASE".format(service_name))
+        impalad.update_config({"log_dir": LOG_DIR+"impalad"})
+        llama=service.get_role_config_group("{0}-LLAMMA-BASE".format(service_name))
+        llama.update_config({"log_dir": LOG_DIR+"impala-llama"})
         ss = service.get_role_config_group("{0}-STATESTORE-BASE".format(service_name))
         ss.update_config({"log_dir": LOG_DIR+"/statestore"})
         cs = service.get_role_config_group("{0}-CATALOGSERVER-BASE".format(service_name))
@@ -847,7 +860,7 @@ def setup_oozie():
         cmhost= management.get_cmhost()
         for rcg in [x for x in service.get_all_role_config_groups()]:
             if rcg.roleType == "OOZIE_SERVER":
-                rcg.update_config({})
+                rcg.update_config({"oozie_log_dir": LOG_DIR+"/oozie"})
                 cdh.create_service_role(service, rcg.roleType, cmhost)
 
         check.status_for_command("Creating Oozie database", service.create_oozie_db())
@@ -883,6 +896,8 @@ def setup_hue():
             if rcg.roleType == "HUE_SERVER":
                 rcg.update_config({"hue_server_log_dir": LOG_DIR+"/hue"})
                 cdh.create_service_role(service, "HUE_SERVER", cmhost)
+            if rcg.roleType == "KT_RENEWER":
+                rcg.update_config({"kt_renewer_log_dir": LOG_DIR+"/hue"})
         # This service is started later on
         # check.status_for_command("Starting Hue Service", service.start())
 
@@ -1220,13 +1235,14 @@ class ManagementActions:
                                      "firehose_heapsize": "215964392",
                                      "mgmt_log_dir": LOG_DIR+"/cloudera-scm-firefose"})
             elif group.roleType == "ALERTPUBLISHER":
-                group.update_config({})
+                group.update_config({"mgmt_log_dir": LOG_DIR+"/cloudera-scm-alertpublisher"})
             elif group.roleType == "EVENTSERVER":
-                group.update_config({"event_server_heapsize": "215964392"})
+                group.update_config({"event_server_heapsize": "215964392",
+                                     "mgmt_log_dir": LOG_DIR+"/cloudera-scm-eventserver"})
             elif group.roleType == "HOSTMONITOR":
-                group.update_config({})
+                group.update_config({"mgmt_log_dir": LOG_DIR+"/cloudera-scm-firehose"})
             elif group.roleType == "SERVICEMONITOR":
-                group.update_config({})
+                group.update_config({"mgmt_log_dir": LOG_DIR+"/cloudera-scm-firehose"})
             elif group.roleType == "NAVIGATOR" and management.licensed():
                 group.update_config({})
             elif group.roleType == "NAVIGATORMETADATASERVER" and management.licensed():
