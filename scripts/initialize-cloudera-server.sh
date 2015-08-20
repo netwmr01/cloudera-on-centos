@@ -58,7 +58,6 @@ n=0
 until [ $n -ge 5 ]
 do
     yum install -y oracle-j2sdk* cloudera-manager-daemons cloudera-manager-server >> /tmp/initialize-cloudera-server.log 2>> /tmp/initialize-cloudera-server.err && break
-	
     n=$[$n+1]
     sleep 15s
 done
@@ -88,6 +87,7 @@ while ! (exec 6<>/dev/tcp/$(hostname)/7180) ; do log 'Waiting for cloudera-scm-s
 log "END: master node deployments"
 
 
+
 # Set up python
 rpm -ivh http://dl.fedoraproject.org/pub/epel/6/i386/epel-release-6-8.noarch.rpm >> /tmp/initialize-cloudera-server.log 2>> /tmp/initialize-cloudera-server.err
 yum -y install python-pip >> /tmp/initialize-cloudera-server.log
@@ -101,7 +101,6 @@ touch /tmp/readyFile
 log "BEGIN: CM deployment - starting"
 # mingrui changed command to print both key info and password.
 logCmd="Command: python cmxDeployOnIbiza.py -n "\""$ClusterName"\"" -u "\""$User"\"" -p "\""$Password"\"" -k "\""$key"\"" -m "\""$mip"\"" -w "\""$worker_ip"\"""
-
 if $HA; then
     logCmd="$logCmd -a"
 fi

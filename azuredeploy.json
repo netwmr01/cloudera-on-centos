@@ -283,7 +283,7 @@
             "value": "[variables('clusterSpec')]"
           },
           "fqdn": {
-            "value": "[reference('name-node').outputs.fqdn.value]"
+            "value": "[reference('master-node').outputs.fqdn.value]"
           }
         }
       }
