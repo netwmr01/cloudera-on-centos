@@ -1229,8 +1229,8 @@ class ManagementActions:
                                      "firehose_database_password": cmx.amon_password,
                                      "firehose_database_type": "postgresql",
                                      "firehose_database_name": "amon",
-                                     "firehose_heapsize": "215964392",
-                                     "mgmt_log_dir": LOG_DIR+"/cloudera-scm-firehose"})
+                                     "mgmt_log_dir": LOG_DIR+"/cloudera-scm-firehose",
+                                     "firehose_heapsize": "215964392"})
             elif group.roleType == "ALERTPUBLISHER":
                 group.update_config({"mgmt_log_dir": LOG_DIR+"/cloudera-scm-alertpublisher"})
             elif group.roleType == "EVENTSERVER":
@@ -1798,12 +1798,13 @@ def main():
     setup_zookeeper(options.highAvailability)
     setup_hdfs(options.highAvailability)
     setup_yarn(options.highAvailability)
-    setup_mapreduce(options.highAvailability)
     setup_spark_on_yarn()
     setup_hive()
     setup_impala(options.highAvailability)
     setup_oozie()
     setup_hue()
+
+    #setup_mapreduce(options.highAvailability)
 
     # Note: setup_easy() is alternative to Step-Through above
     # This this provides an example of alternative method of
