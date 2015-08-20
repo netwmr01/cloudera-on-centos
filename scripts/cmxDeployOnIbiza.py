@@ -594,7 +594,7 @@ def setup_yarn(HA):
         setup_yarn_ha()
 
 
-def setup_mapreduce():
+def setup_mapreduce(HA):
     """
     MapReduce
     :return:
@@ -610,6 +610,10 @@ def setup_mapreduce():
         service = cluster.get_service(service_name)
         hosts = management.get_hosts()
 
+        jk=management.get_cmhost()
+        if HA:
+            jk=[x for x in hosts if x.id == 0][0]
+
         # Service-Wide
         service.update_config(cdh.dependencies_for(service))
 
@@ -617,7 +621,7 @@ def setup_mapreduce():
             if rcg.roleType == "JOBTRACKER":
                 # mapreduce-JOBTRACKER - Default Group
                 rcg.update_config({"jobtracker_mapred_local_dir_list": "/mapred/jt"})
-                cdh.create_service_role(service, rcg.roleType, [x for x in hosts if x.id == 0][0])
+                cdh.create_service_role(service, rcg.roleType, jk)
             if rcg.roleType == "TASKTRACKER":
                 # mapreduce-TASKTRACKER - Default Group
                 rcg.update_config({"tasktracker_mapred_local_dir_list": "/mapred/local",
@@ -1794,7 +1798,7 @@ def main():
     setup_zookeeper(options.highAvailability)
     setup_hdfs(options.highAvailability)
     setup_yarn(options.highAvailability)
-    setup_mapreduce()
+    setup_mapreduce(options.highAvailability)
     setup_spark_on_yarn()
     setup_hive()
     setup_impala(options.highAvailability)
