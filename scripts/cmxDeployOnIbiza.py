@@ -254,6 +254,14 @@ def setup_hdfs(HA):
           dfs_snn_dir_list+=",/data%d/dfs/snn" % (x)
           dfs_data_dir_list+=",/data%d/dfs/dn" % (x)
 
+        #No HA, using POC setup, all service in one master node aka the cm host
+    if not HA:
+        nn_host_id=management.get_cmhost()
+        snn_host_id=management.get_cmhost()
+    else:
+        nn_host_id = [host for host in hosts if host.id == 0][0]
+        snn_host_id = [host for host in hosts if host.id == 1][0]
+
         
         
         # Role Config Group equivalent to Service Default Group
@@ -266,16 +274,15 @@ def setup_hdfs(HA):
                                    "dfs_namenode_service_handler_count": "70",
                                    "dfs_namenode_servicerpc_address": "8022",
                                    "namenode_log_dir": LOG_DIR+"/hadoop-hdfs"})
-                cdh.create_service_role(service, rcg.roleType, [x for x in hosts if x.id == 0][0])
+                cdh.create_service_role(service, rcg.roleType, nn_host_id)
             if rcg.roleType == "SECONDARYNAMENODE":
                 # hdfs-SECONDARYNAMENODE - Default Group
                 rcg.update_config({"fs_checkpoint_dir_list": dfs_snn_dir_list,
                                    "secondary_namenode_java_heapsize": "1677058304",
                                    "secondarynamenode_log_dir": LOG_DIR+"/hadoop-hdfs"})
                 # chose a server that it's not NN, easier to enable HDFS-HA later
-                secondary_nn =  [x for x in hosts if x.id == 1 ][0]
 
-                cdh.create_service_role(service, rcg.roleType, secondary_nn)
+                cdh.create_service_role(service, rcg.roleType, snn_host_id)
 
             if rcg.roleType == "DATANODE":
                 # hdfs-DATANODE - Default Group
@@ -296,13 +303,9 @@ def setup_hdfs(HA):
                 rcg.update_config({"dfs_client_use_trash": True})
 
 
-    nn_host_id = [host for host in hosts if host.id == 0][0]
-    snn_host_id = [host for host in hosts if host.id == 1][0]
 
-    #No HA, using POC setup, all service in one master node aka the cm host
-    if not HA:
-        nn_host_id=management.get_cmhost()
-        snn_host_id=management.get_cmhost()
+
+
 
     # print nn_host_id.hostId
     # print snn_host_id.hostId
@@ -528,6 +531,14 @@ def setup_yarn(HA):
         for x in range(int(count)):
           yarn_dir_list+=",/data%d/yarn/nm" % (x)
 
+        cmhost= management.get_cmhost()
+        rm_host_id = [host for host in hosts if host.id == 0][0]
+        srm_host_id = [host for host in hosts if host.id == 1][0]
+
+        if not HA:
+            rm_host_id=cmhost
+            srm_host_id=cmhost
+
         for rcg in [x for x in service.get_all_role_config_groups()]:
             if rcg.roleType == "RESOURCEMANAGER":
                 # yarn-RESOURCEMANAGER - Default Group
@@ -535,12 +546,12 @@ def setup_yarn(HA):
                                    "yarn_scheduler_maximum_allocation_mb": "2568",
                                    "yarn_scheduler_maximum_allocation_vcores": "2",
                                    "resource_manager_log_dir": LOG_DIR+"/hadoop-yarn"})
-                cdh.create_service_role(service, rcg.roleType, [x for x in hosts if x.id == 0][0])
+                cdh.create_service_role(service, rcg.roleType, rm_host_id)
             if rcg.roleType == "JOBHISTORY":
                 # yarn-JOBHISTORY - Default Group
                 rcg.update_config({"mr2_jobhistory_java_heapsize": "1000000000",
                                    "mr2_jobhistory_log_dir": LOG_DIR+"/hadoop-mapreduce"})
-                cmhost= management.get_cmhost()
+
                 cdh.create_service_role(service, rcg.roleType, cmhost)
             if rcg.roleType == "NODEMANAGER":
                 # yarn-NODEMANAGER - Default Group
@@ -559,8 +570,7 @@ def setup_yarn(HA):
                 for host in management.get_hosts(include_cm_host=True):
                     cdh.create_service_role(service, rcg.roleType, host)
 
-        rm_host_id = [host for host in hosts if host.id == 0][0]
-        srm_host_id = [host for host in hosts if host.id == 1][0]
+
         #print rm_host_id.hostId
         #print srm_host_id.hostId
         for role_type in ['NODEMANAGER']:
@@ -971,11 +981,9 @@ def setup_yarn_ha():
     hosts = management.get_hosts()
     # hosts = api.get_all_hosts()
     if len(yarn.get_roles_by_type("RESOURCEMANAGER")) != 2:
-        # Choose random node for standby RM
-        # rm = random.choice([nm for nm in yarn.get_roles_by_type("NODEMANAGER")
-        #         if nm.hostRef.hostId != yarn.get_roles_by_type("RESOURCEMANAGER")[0].hostRef.hostId])
+        # Choose secondary name node for standby RM
         rm = [x for x in hosts if x.id == 1 ][0]
-        #        if nm.hostRef.hostId != yarn.get_roles_by_type("RESOURCEMANAGER")[0].hostRef.hostId])
+
         cmd = yarn.enable_rm_ha(rm.hostId, zookeeper.name)
         check.status_for_command("Enable YARN-HA - [ http://%s:7180/cmf/command/%s/details ]" %
                                  (socket.getfqdn(cmx.cm_server), cmd.id), cmd)
