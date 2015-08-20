@@ -255,12 +255,12 @@ def setup_hdfs(HA):
           dfs_data_dir_list+=",/data%d/dfs/dn" % (x)
 
         #No HA, using POC setup, all service in one master node aka the cm host
-    if not HA:
-        nn_host_id=management.get_cmhost()
-        snn_host_id=management.get_cmhost()
-    else:
-        nn_host_id = [host for host in hosts if host.id == 0][0]
-        snn_host_id = [host for host in hosts if host.id == 1][0]
+        if not HA:
+            nn_host_id=management.get_cmhost()
+            snn_host_id=management.get_cmhost()
+        else:
+            nn_host_id = [host for host in hosts if host.id == 0][0]
+            snn_host_id = [host for host in hosts if host.id == 1][0]
 
         
         
