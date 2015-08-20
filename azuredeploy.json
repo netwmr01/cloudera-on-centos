@@ -106,18 +106,18 @@
     }
   },
   "variables": {
-    "scriptsUri": "https://raw.githubusercontent.com/netwmr01/cloudera-on-centos/gh-pages",
+    "scriptsUri": "https://raw.githubusercontent.com/netwmr01/cloudera-on-centos/master",
     "storageAccount": {
       "prefix": "[parameters('storageAccountPrefix')]",
       "type": "[parameters('storageAccountType')]"
     },
     "clusterTshirtSizeEval": {
-      "nameNodeCount": 1,
+      "masterNodeCount": 1,
       "dataNodeCount": "[parameters('numberOfDataNodes')]",
       "highAvailability": "false"
     },
     "clusterTshirtSizeProd": {
-      "nameNodeCount": 3,
+      "masterNodeCount": 3,
       "dataNodeCount": "[parameters('numberOfDataNodes')]",
       "highAvailability": "true"
     },
@@ -127,14 +127,14 @@
       "privateIPAddressPrefix": "[parameters('nodeAddressPrefix')]",
       "adminUserName": "[parameters('adminUserName')]",
       "adminPassword": "[parameters('adminPassword')]",
-      "nameNodeASName": "[concat(parameters('dnsNamePrefix'), '-nnAS')]",
+      "masterNodeASName": "[concat(parameters('dnsNamePrefix'), '-mnAS')]",
       "dataNodeASName": "[concat(parameters('dnsNamePrefix'), '-dnAS')]"
     },
     "networkSpec": {
       "addressPrefix": "[parameters('addressPrefix')]",
       "subnetPrefix": "[parameters('subnetPrefix')]",
       "privateIPPrefix": "[parameters('nodeAddressPrefix')]",
-      "nameNodeAddressStart": 10,
+      "masterNodeAddressStart": 10,
       "dataNodeAddressStart": 20,
       "virtualNetworkName": "[parameters('virtualNetworkName')]",
       "virtualNetworkSubnetName": "[parameters('subnetName')]"
@@ -158,8 +158,8 @@
           "networkSpec": {
             "value": "[variables('networkSpec')]"
           },
-          "nameNodeASName": {
-            "value": "[variables('vmSpec').nameNodeASName]"
+          "masterNodeASName": {
+            "value": "[variables('vmSpec').masterNodeASName]"
           },
           "dataNodeASName": {
             "value": "[variables('vmSpec').dataNodeASName]"
@@ -168,7 +168,7 @@
       }
     },
     {
-      "name": "name-node",
+      "name": "master-node",
       "type": "Microsoft.Resources/deployments",
       "apiVersion": "2015-01-01",
       "dependsOn": [
@@ -177,7 +177,7 @@
       "properties": {
         "mode": "Incremental",
         "templateLink": {
-          "uri": "[concat(variables('scriptsUri'), '/name-node.json')]",
+          "uri": "[concat(variables('scriptsUri'), '/master-node.json')]",
           "contentVersion": "1.0.0.0"
         },
         "parameters": {
@@ -194,7 +194,7 @@
             "value": "[variables('storageAccount')]"
           },
           "vmCount": {
-            "value": "[variables('clusterSpec').nameNodeCount]"
+            "value": "[variables('clusterSpec').masterNodeCount]"
           },
           "vmSpec": {
             "value": "[variables('vmSpec')]"
@@ -255,7 +255,7 @@
       "apiVersion": "2015-01-01",
       "dependsOn": [
         "Microsoft.Resources/deployments/data-node",
-        "Microsoft.Resources/deployments/name-node"
+        "Microsoft.Resources/deployments/master-node"
       ],
       "properties": {
         "mode": "Incremental",

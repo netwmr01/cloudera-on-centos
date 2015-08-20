@@ -177,8 +177,10 @@ def setup_zookeeper(HA):
         print "Create %s service" % service_name
         cluster.create_service(service_name, service_type)
         service = cluster.get_service(service_name)
+        
         hosts = management.get_hosts()
         cmhost= management.get_cmhost()
+        
         service.update_config({"zookeeper_datadir_autocreate": True})
 
 
@@ -202,6 +204,7 @@ def setup_zookeeper(HA):
                 #No HA, using POC setup, all service in one master node aka the cm host
                 else:
                     cdh.create_service_role(service, rcg.roleType, cmhost)
+
 
 
         # init_zookeeper not required as the API performs this when adding Zookeeper
@@ -304,9 +307,6 @@ def setup_hdfs(HA):
 
 
 
-
-
-
     # print nn_host_id.hostId
     # print snn_host_id.hostId
     for role_type in ['DATANODE']:
@@ -357,6 +357,7 @@ def setup_hbase():
         master_host_id = [host for host in hosts if host.id == 0][0]
         backup_master_host_id = [host for host in hosts if host.id == 1][0]    
         cmhost = management.get_cmhost()
+
         for rcg in [x for x in service.get_all_role_config_groups()]:
             if rcg.roleType == "MASTER":
                 cdh.create_service_role(service, rcg.roleType, master_host_id)
@@ -553,6 +554,7 @@ def setup_yarn(HA):
                                    "mr2_jobhistory_log_dir": LOG_DIR+"/hadoop-mapreduce"})
 
                 cdh.create_service_role(service, rcg.roleType, cmhost)
+                
             if rcg.roleType == "NODEMANAGER":
                 # yarn-NODEMANAGER - Default Group
                 rcg.update_config({"yarn_nodemanager_heartbeat_interval_ms": "100",
