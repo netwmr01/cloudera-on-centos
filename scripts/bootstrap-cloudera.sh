@@ -16,7 +16,7 @@
 IPPREFIX=$1
 NAMEPREFIX=$2
 NAMESUFFIX=$3
-NAMENODES=$4
+MASTERNODES=$4
 DATANODES=$5
 ADMINUSER=$6
 HA=$7
@@ -33,7 +33,7 @@ log() {
 # Converts a domain like machine.domain.com to domain.com by removing the machine name
 NAMESUFFIX=`echo $NAMESUFFIX | sed 's/^[^.]*\.//'`
 
-ManagementNode="${IPPREFIX}10:${NAMEPREFIX}-nn0.$NAMESUFFIX:${NAMEPREFIX}-nn0"
+ManagementNode="${IPPREFIX}10:${NAMEPREFIX}-mn0.$NAMESUFFIX:${NAMEPREFIX}-mn0"
 mip=$(echo "$ManagementNode" | sed 's/:/ /' | sed 's/:/ /' | cut -d ' ' -f 1)
 
 log "set private key"
@@ -49,11 +49,11 @@ openssl rsa -in $file -outform PEM > $key
 #Generate IP Addresses for the cloudera setup
 NODES=()
 
-let "NAMEEND=NAMENODES-1"
+let "NAMEEND=MASTERNODES-1"
 for i in $(seq 1 $NAMEEND)
 do 
   let "IP=i+10"
-  NODES+=("$IPPREFIX$IP:${NAMEPREFIX}-nn$i.$NAMESUFFIX:${NAMEPREFIX}-nn$i")
+  NODES+=("$IPPREFIX$IP:${NAMEPREFIX}-mn$i.$NAMESUFFIX:${NAMEPREFIX}-mn$i")
 done
 
 let "DATAEND=DATANODES-1"
