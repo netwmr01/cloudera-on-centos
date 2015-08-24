@@ -16,6 +16,20 @@
         "description": "Admin password for the Virtual Machines"
       }
     },
+    "cmUserName": {
+      "type": "string",
+      "defaultValue": "cmadmin",
+      "metadata": {
+        "description": "User name for the Cloudera Manager"
+      }
+    },
+    "cmPassword": {
+      "type": "securestring",
+      "defaultValue": "cmpassword",
+      "metadata": {
+        "description": "password for the Cloudera Manager"
+      }
+    },
     "storageAccountPrefix": {
       "type": "string",
       "defaultValue": "storageaccountprefix",
@@ -284,6 +298,12 @@
           },
           "fqdn": {
             "value": "[reference('master-node').outputs.fqdn.value]"
+          },
+          "cmUserName": {
+            "value": "[parameters('cmUserName')]"
+          },
+          "cmPassword": {
+            "value": "[parameters('cmPassword')]"
           }
         }
       }

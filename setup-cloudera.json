@@ -22,6 +22,14 @@
     },
     "fqdn": {
       "type": "string"
+    },
+    "cmUserName":
+    {
+      "type": "string"
+    },
+    "cmPassword":
+    {
+      "type": "string"
     }
   },
   "resources": [
@@ -41,7 +49,7 @@
             "[concat(parameters('scriptsUri'), '/scripts/cmxDeployOnIbiza.py')]",
             "[concat(parameters('scriptsUri'), '/scripts/install-postgresql.sh')]"
           ],
-          "commandToExecute": "[concat('sh bootstrap-cloudera.sh \"', parameters('networkSpec').privateIPPrefix, '\" \"', parameters('dnsNamePrefix'), '\" \"', parameters('fqdn'), '\" ', parameters('clusterSpec').masterNodeCount, ' ', parameters('clusterSpec').dataNodeCount, ' \"', parameters('vmSpec').adminUserName, '\" \"', parameters('clusterSpec').highAvailability, '\" \"', parameters('vmSpec').adminPassword, '\" >> /home/$ADMINUSER/bootstrap-cloudera.log 2>&1')]"
+          "commandToExecute": "[concat('sh bootstrap-cloudera.sh \"', parameters('networkSpec').privateIPPrefix, '\" \"', parameters('dnsNamePrefix'), '\" \"', parameters('fqdn'), '\" ', parameters('clusterSpec').masterNodeCount, ' ', parameters('clusterSpec').dataNodeCount, ' \"', parameters('vmSpec').adminUserName, '\" \"', parameters('clusterSpec').highAvailability, '\" \"', parameters('vmSpec').adminPassword, '\" \"', parameters('cmUserName'), '\" \"', parameters('cmPassword'), '\" >> /home/$ADMINUSER/bootstrap-cloudera.log 2>&1')]"
         }
       }
     }
