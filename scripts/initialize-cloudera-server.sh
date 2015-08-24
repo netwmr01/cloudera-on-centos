@@ -104,7 +104,7 @@ touch /tmp/readyFile
 log "BEGIN: CM deployment - starting"
 # mingrui changed command to print both key info and password.
 logCmd="Command: python cmxDeployOnIbiza.py -n "\""$ClusterName"\"" -u "\""$User"\"" -p "\""$Password"\"" -k "\""$key"\"" -m "\""$mip"\"" -w "\""$worker_ip"\"" -c " \""$cmUser"\"" -s "\""$cmPassword"\"""
-if $HA; thenß
+if $HA; then
     logCmd="$logCmd -a"
 fi
 log $logCmd
