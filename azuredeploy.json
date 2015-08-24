@@ -299,8 +299,8 @@
           "fqdn": {
             "value": "[reference('master-node').outputs.fqdn.value]"
           },
-          "cmUserName": {
-            "value": "[parameters('cmUserName')]"
+          "cmUsername": {
+            "value": "[parameters('cmUsername')]"
           },
           "cmPassword": {
             "value": "[parameters('cmPassword')]"

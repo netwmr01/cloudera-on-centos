@@ -1616,7 +1616,7 @@ def parse_options():
 
     cmx_config_options = {'ssh_root_password': None, 'ssh_root_user': 'root', 'ssh_private_key': None,
                           'cluster_name': 'Cluster 1', 'cluster_version': 'CDH5',
-                          'username': 'admin', 'password': 'admin', 'cm_server': None,
+                          'username': 'cmadmin', 'password': 'cmpassword', 'cm_server': None,
                           'host_names': None, 'license_file': None, 'parcel': []}
 
     def cmx_args(option, opt_str, value, *args, **kwargs):
@@ -1707,6 +1707,11 @@ def parse_options():
                       help='Teardown Cloudera Manager Cluster. Required arguments "keep_cluster" or "remove_cluster".')
     parser.add_option('-a', '--highavailable', dest='highAvailability', action="store_true", default=False,
                       help='Create a High Availability cluster')
+    parser.add_option('-c', '--cm-user', dest='username', type="string", action='callback',
+                      callback=cmx_args, help='Set Cloudera Manager Username')
+    parser.add_option('-s', '--cm-password', dest='password', type="string", action='callback',
+                      callback=cmx_args, help='Set Cloudera Manager Password')
+
     (options, args) = parser.parse_args()
 
     # Install CDH5 latest version

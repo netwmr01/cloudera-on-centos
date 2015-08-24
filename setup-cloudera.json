@@ -23,12 +23,10 @@
     "fqdn": {
       "type": "string"
     },
-    "cmUserName":
-    {
+    "cmUsername": {
       "type": "string"
     },
-    "cmPassword":
-    {
+    "cmPassword": {
       "type": "string"
     }
   },
