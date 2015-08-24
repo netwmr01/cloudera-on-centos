@@ -16,7 +16,7 @@
         "description": "Admin password for the Virtual Machines"
       }
     },
-    "cmUserName": {
+    "cmUsername": {
       "type": "string",
       "defaultValue": "cmadmin",
       "metadata": {
@@ -128,12 +128,16 @@
     "clusterTshirtSizeEval": {
       "masterNodeCount": 1,
       "dataNodeCount": "[parameters('numberOfDataNodes')]",
-      "highAvailability": "false"
+      "highAvailability": "false",
+      "cmUsername": "[parameters('cmUsername')]",
+      "cmPassword": "[parameters('cmPassword')]"
     },
     "clusterTshirtSizeProd": {
       "masterNodeCount": 3,
       "dataNodeCount": "[parameters('numberOfDataNodes')]",
-      "highAvailability": "true"
+      "highAvailability": "true",
+      "cmUsername": "[parameters('cmUsername')]",
+      "cmPassword": "[parameters('cmPassword')]"
     },
     "clusterSpec": "[variables(concat('clusterTshirtSize', parameters('tshirtSize')))]",
     "vmSpec": {
@@ -298,12 +302,6 @@
           },
           "fqdn": {
             "value": "[reference('master-node').outputs.fqdn.value]"
-          },
-          "cmUsername": {
-            "value": "[parameters('cmUsername')]"
-          },
-          "cmPassword": {
-            "value": "[parameters('cmPassword')]"
           }
         }
       }
