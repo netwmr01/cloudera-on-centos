@@ -24,7 +24,7 @@
       }
     },
     "cmPassword": {
-      "type": "securestring",
+      "type": "string",
       "defaultValue": "cmpassword",
       "metadata": {
         "description": "password for the Cloudera Manager"
