@@ -22,7 +22,7 @@ ADMINUSER=$6
 HA=$7
 PASSWORD=$8
 CMUSER=$9
-CMPASSWORD=$10
+CMPASSWORD=${10}
 
 CLUSTERNAME=$NAMEPREFIX
 
@@ -82,7 +82,7 @@ worker_ip=$(echo "${wip_string%?}")
 log "Worker ip to be supplied to next script: $worker_ip"
 log "Adminuser: $ADMINUSER Adminpassword: $PASSWORD"
 log "BEGIN: Starting detached script to finalize initialization"
-log "CMUSER $CMUSER, CMPASSWORD $CMPASSWORD, $10"
+log "CMUSER $CMUSER, CMPASSWORD $CMPASSWORD, ${10}"
 sh initialize-cloudera-server.sh "$CLUSTERNAME" "$key" "$mip" "$worker_ip" $HA $ADMINUSER $PASSWORD $CMUSER $CMPASSWORD>/dev/null 2>&1
 log "END: Detached script to finalize initialization running. PID: $!"
 
