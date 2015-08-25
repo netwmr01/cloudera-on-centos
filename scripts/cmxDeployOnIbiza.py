@@ -565,8 +565,8 @@ def setup_yarn(HA):
                 rcg.update_config({"yarn_nodemanager_heartbeat_interval_ms": "100",
                                    "node_manager_java_heapsize": "2000000000",
                                    "yarn_nodemanager_local_dirs": yarn_dir_list,
-                                   "yarn_nodemanager_resource_cpu_vcores": "12",
-                                   "yarn_nodemanager_resource_memory_mb": "2568",
+                                   "yarn_nodemanager_resource_cpu_vcores": "10",
+                                   "yarn_nodemanager_resource_memory_mb": "45056",
                                    "node_manager_log_dir": LOG_DIR+"/hadoop-yarn",
                                    "yarn_nodemanager_log_dirs": LOG_DIR+"/hadoop-yarn/container"})
 #                for host in hosts:
