@@ -230,7 +230,8 @@
               "uri" : "https://cdhosimages3.blob.core.windows.net/bootvhds/CentOS66AzureCDH_v2.vhd"
             },
             "osType":"linux",
-            "caching": "ReadWrite"
+            "caching": "ReadWrite",
+            "createOption": "FromImage"
           },
           "dataDisks": [
             {
