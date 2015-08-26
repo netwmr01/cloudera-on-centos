@@ -319,19 +319,16 @@
           }
         },
         "storageProfile": {
-          "imageReference": {
-            "publisher": "cloudera1qaz2wsx",
-            "offer": "mingtuitest",
-            "sku": "1",
-            "version": "1.0.0"
-          },
           "osDisk": {
             "name": "osdisk",
             "vhd": {
-              "uri": "[concat('http://', variables('storageAccountName'), copyIndex(), '.blob.core.windows.net/vhds/', variables('vmName'), copyIndex(), '.vhd')]"
+              "uri": "[concat('http://', copyIndex(), variables('storageAccountName'), '.blob.core.windows.net/vhds/', variables('vmName'), copyIndex(), '.vhd')]"
             },
-            "caching": "ReadWrite",
-            "createOption": "FromImage"
+            "image" : {
+              "uri" : "https://cdhosimages3.blob.core.windows.net/bootvhds/CentOS66AzureCDH_v2.vhd"
+            },
+            "osType":"linux",
+            "caching": "ReadWrite"
           },
           "dataDisks": [
             {
