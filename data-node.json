@@ -227,7 +227,7 @@
               "uri": "[concat('http://', copyIndex(), variables('storageAccountName'), '.blob.core.windows.net/vhds/', variables('vmName'), copyIndex(), '.vhd')]"
             },
             "image" : {
-              "uri" : "https://cdhosimages3.blob.core.windows.net/bootvhds/CentOS66AzureCDH_v2.vhd"
+              "uri" : "https://clouderaimagerepo.blob.core.windows.net/copiedvhds/testcopy1.vhd"
             },
             "osType":"linux",
             "caching": "ReadWrite",
