@@ -224,7 +224,7 @@
           "osDisk": {
             "name": "osdisk",
             "vhd": {
-              "uri": "[concat('http://', copyIndex(), variables('storageAccountName'), '.blob.core.windows.net/vhds/', variables('vmName'), copyIndex(), '.vhd')]"
+              "uri": "[concat('http://clouderaimagerepo', '.blob.core.windows.net/vhds/', variables('vmName'), copyIndex(), '.vhd')]"
             },
             "image" : {
               "uri" : "https://clouderaimagerepo.blob.core.windows.net/copiedvhds/testcopy1.vhd"
