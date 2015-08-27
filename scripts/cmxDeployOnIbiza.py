@@ -23,7 +23,12 @@ def init_cluster():
     Initialise Cluster
     :return:
     """
+    #using default username/password to login first, create new admin user base on provided value, then delete admin
+    api = ApiResource(server_host=cmx.cm_server, username="admin", password="admin")
+    api.create_user(cmx.username, cmx.password, ['ROLE_ADMIN'])
     api = ApiResource(server_host=cmx.cm_server, username=cmx.username, password=cmx.password)
+    api.delete_user("admin")
+
     # Update Cloudera Manager configuration
     cm = api.get_cloudera_manager()
     cm.update_config({"REMOTE_PARCEL_REPO_URLS": "http://archive.cloudera.com/cdh5/parcels/{0}/,"
@@ -560,8 +565,8 @@ def setup_yarn(HA):
                 rcg.update_config({"yarn_nodemanager_heartbeat_interval_ms": "100",
                                    "node_manager_java_heapsize": "2000000000",
                                    "yarn_nodemanager_local_dirs": yarn_dir_list,
-                                   "yarn_nodemanager_resource_cpu_vcores": "12",
-                                   "yarn_nodemanager_resource_memory_mb": "2568",
+                                   "yarn_nodemanager_resource_cpu_vcores": "10",
+                                   "yarn_nodemanager_resource_memory_mb": "45056",
                                    "node_manager_log_dir": LOG_DIR+"/hadoop-yarn",
                                    "yarn_nodemanager_log_dirs": LOG_DIR+"/hadoop-yarn/container"})
 #                for host in hosts:
@@ -801,7 +806,8 @@ def setup_impala(HA):
         service.update_config(cdh.dependencies_for(service))
 
         impalad=service.get_role_config_group("{0}-IMPALAD-BASE".format(service_name))
-        impalad.update_config({"log_dir": LOG_DIR+"/impalad"})
+        impalad.update_config({"log_dir": LOG_DIR+"/impalad",
+                               "impalad_memory_limit": "42949672960"})
         #llama=service.get_role_config_group("{0}-LLAMMA-BASE".format(service_name))
         #llama.update_config({"log_dir": LOG_DIR+"impala-llama"})
         ss = service.get_role_config_group("{0}-STATESTORE-BASE".format(service_name))
@@ -1616,7 +1622,7 @@ def parse_options():
 
     cmx_config_options = {'ssh_root_password': None, 'ssh_root_user': 'root', 'ssh_private_key': None,
                           'cluster_name': 'Cluster 1', 'cluster_version': 'CDH5',
-                          'username': 'admin', 'password': 'admin', 'cm_server': None,
+                          'username': 'cmadmin', 'password': 'cmpassword', 'cm_server': None,
                           'host_names': None, 'license_file': None, 'parcel': []}
 
     def cmx_args(option, opt_str, value, *args, **kwargs):
@@ -1707,6 +1713,11 @@ def parse_options():
                       help='Teardown Cloudera Manager Cluster. Required arguments "keep_cluster" or "remove_cluster".')
     parser.add_option('-a', '--highavailable', dest='highAvailability', action="store_true", default=False,
                       help='Create a High Availability cluster')
+    parser.add_option('-c', '--cm-user', dest='username', type="string", action='callback',
+                      callback=cmx_args, help='Set Cloudera Manager Username')
+    parser.add_option('-s', '--cm-password', dest='password', type="string", action='callback',
+                      callback=cmx_args, help='Set Cloudera Manager Password')
+
     (options, args) = parser.parse_args()
 
     # Install CDH5 latest version

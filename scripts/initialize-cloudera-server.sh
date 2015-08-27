@@ -17,6 +17,9 @@ HA=$5
 User=$6
 Password=$7
 
+cmUser=$8
+cmPassword=$9
+
 log "BEGIN: master node deployments"
 
 log "Beginning process of disabling SELinux"
@@ -99,15 +102,16 @@ touch /tmp/readyFile
 
 # Execute script to deploy Cloudera cluster
 log "BEGIN: CM deployment - starting"
+log "myCMusername: $cmUser, myCMpassword: $cmPassword"
 # mingrui changed command to print both key info and password.
-logCmd="Command: python cmxDeployOnIbiza.py -n "\""$ClusterName"\"" -u "\""$User"\"" -p "\""$Password"\"" -k "\""$key"\"" -m "\""$mip"\"" -w "\""$worker_ip"\"""
+logCmd="Command: python cmxDeployOnIbiza.py -n "\""$ClusterName"\"" -u "\""$User"\"" -p "\""$Password"\"" -k "\""$key"\"" -m "\""$mip"\"" -w "\""$worker_ip"\"" -c " \""$cmUser"\"" -s "\""$cmPassword"\"""
 if $HA; then
     logCmd="$logCmd -a"
 fi
 log $logCmd
 if $HA; then
-    python cmxDeployOnIbiza.py -n "$ClusterName" -u $User -p $Password  -m "$mip" -w "$worker_ip" -a >> /tmp/initialize-cloudera-server.log 2>> /tmp/initialize-cloudera-server.err
+    python cmxDeployOnIbiza.py -n "$ClusterName" -u $User -p $Password  -m "$mip" -w "$worker_ip" -a -c $cmUser -s $cmPassword>> /tmp/initialize-cloudera-server.log 2>> /tmp/initialize-cloudera-server.err
 else
-    python cmxDeployOnIbiza.py -n "$ClusterName" -u $User -p $Password  -m "$mip" -w "$worker_ip" >> /tmp/initialize-cloudera-server.log 2>> /tmp/initialize-cloudera-server.err
+    python cmxDeployOnIbiza.py -n "$ClusterName" -u $User -p $Password  -m "$mip" -w "$worker_ip" -c $cmUser -s $cmPassword>> /tmp/initialize-cloudera-server.log 2>> /tmp/initialize-cloudera-server.err
 fi
 log "END: CM deployment ended"

@@ -16,6 +16,20 @@
         "description": "Admin password for the Virtual Machines"
       }
     },
+    "cmUsername": {
+      "type": "string",
+      "defaultValue": "cmadmin",
+      "metadata": {
+        "description": "User name for the Cloudera Manager"
+      }
+    },
+    "cmPassword": {
+      "type": "securestring",
+      "defaultValue": "cmpassword",
+      "metadata": {
+        "description": "password for the Cloudera Manager"
+      }
+    },
     "storageAccountPrefix": {
       "type": "string",
       "defaultValue": "storageaccountprefix",
@@ -106,7 +120,7 @@
     }
   },
   "variables": {
-    "scriptsUri": "https://raw.githubusercontent.com/netwmr01/cloudera-on-centos/master",
+    "scriptsUri": "https://raw.githubusercontent.com/netwmr01/cloudera-on-centos/gh-pages",
     "storageAccount": {
       "prefix": "[parameters('storageAccountPrefix')]",
       "type": "[parameters('storageAccountType')]"
@@ -284,6 +298,12 @@
           },
           "fqdn": {
             "value": "[reference('master-node').outputs.fqdn.value]"
+          },
+          "cmUsername": {
+            "value": "[parameters('cmUsername')]"
+          },
+          "cmPassword": {
+            "value": "[parameters('cmPassword')]"
           }
         }
       }
