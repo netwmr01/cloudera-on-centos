@@ -319,15 +319,19 @@
           }
         },
         "storageProfile": {
-          "osDisk": {
+          "imageReference":
+          {
+            "publisher": "cloudera1qaz2wsx",
+            "offer": "mingtuitest",
+            "sku": "1",
+            "version": "1.0.0"
+          },
+          "osDisk":
+          {
             "name": "osdisk",
             "vhd": {
-              "uri": "[concat('http://clouderaimagerepo', '.blob.core.windows.net/vhds/', variables('vmName'), copyIndex(), '.vhd')]"
+              "uri": "[concat('http://', variables('storageAccountName'), copyIndex(), '.blob.core.windows.net/vhds/', variables('vmName'), copyIndex(), '.vhd')]"
             },
-            "image" : {
-              "uri" : "https://clouderaimagerepo.blob.core.windows.net/copiedvhds/testcopy1.vhd"
-            },
-            "osType":"linux",
             "caching": "ReadWrite",
             "createOption": "FromImage"
           },
