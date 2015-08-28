@@ -322,7 +322,7 @@
           "imageReference":
           {
             "publisher": "cloudera1qaz2wsx",
-            "offer": "mingtuitest",
+            "offer": "mingtuitest-preview",
             "sku": "1",
             "version": "1.0.0"
           },
