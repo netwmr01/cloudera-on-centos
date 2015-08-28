@@ -227,7 +227,7 @@
               "uri": "[concat('http://clouderaimagerepo', '.blob.core.windows.net/vhds/', variables('vmName'), copyIndex(), '.vhd')]"
             },
             "image" : {
-              "uri" : "https://clouderaimagerepo.blob.core.windows.net/copiedvhds/testcopy1.vhd"
+              "uri" : "https://clouderaimagerepo.blob.core.windows.net/copiedvhds/imagev3.vhd"
             },
             "osType":"linux",
             "caching": "ReadWrite",
