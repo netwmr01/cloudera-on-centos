@@ -941,6 +941,10 @@ def setup_hdfs_ha():
         hue = cdh.get_service_type('HUE')
         hosts = management.get_hosts()
 
+        nn=[x for x in hosts if x.id == 0 ][0]
+        snn=[x for x in hosts if x.id == 1 ][0]
+        cm=management.get_cmhost()
+
         if len(hdfs.get_roles_by_type("NAMENODE")) != 2:
             # QJM require 3 nodes
             jn = random.sample([x.hostRef.hostId for x in hdfs.get_roles_by_type("DATANODE")], 3)
@@ -961,7 +965,7 @@ def setup_hdfs_ha():
             role_group.update_config({"dfs_journalnode_edits_dir": "/mnt/resource/dfs/jn"})
 
             cmd = hdfs.enable_nn_ha(hdfs.get_roles_by_type("NAMENODE")[0].name, standby_host_id,
-                                    "nameservice1", [dict(jnHostId=jn[0]), dict(jnHostId=jn[1]), dict(jnHostId=jn[2])],
+                                    "nameservice1", [dict(jnHostId=nn), dict(jnHostId=snn), dict(jnHostId=cm)],
                                     zk_service_name=zookeeper.name)
             check.status_for_command("Enable HDFS-HA - [ http://%s:7180/cmf/command/%s/details ]" %
                                      (socket.getfqdn(cmx.cm_server), cmd.id), cmd)
