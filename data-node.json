@@ -223,9 +223,9 @@
         "storageProfile": {
           "imageReference":
           {
-            "publisher": "cloudera1qaz2wsx",
-            "offer": "mingtuitest-preview",
-            "sku": "1",
+            "publisher": "cloudera",
+            "offer": "cloudera-centos-6-preview",
+            "sku": "CLOUDERA-CENTOS-6",
             "version": "1.0.0"
           },
           "osDisk":
