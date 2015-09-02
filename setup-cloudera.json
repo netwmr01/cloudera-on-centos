@@ -28,6 +28,24 @@
     },
     "cmPassword": {
       "type": "string"
+    },
+    "emailAddress": {
+      "type": "string"
+    },
+    "businessPhone": {
+      "type": "string"
+    },
+    "firstName": {
+      "type": "string"
+    },
+    "lastName": {
+      "type": "string"
+    },
+    "jobRole": {
+      "type": "string"
+    },
+    "jobFunction": {
+      "type": "string"
     }
   },
   "resources": [
