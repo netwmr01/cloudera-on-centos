@@ -1729,7 +1729,7 @@ def parse_options():
                       callback=cmx_args, help='Set last name')
     parser.add_option('-o', '--job-role', dest='jobrole', type="string", action='callback',
                       callback=cmx_args, help='Set job role')
-    parser.add_option('-f', '--job-function', dest='jobfunction', type="string", action='callback',
+    parser.add_option('-i', '--job-function', dest='jobfunction', type="string", action='callback',
                       callback=cmx_args, help='Set job function')
     parser.add_option('-e', '--accept-eula', dest='accepted', action="store_true", default=False,
                       help='Must accept eula before install')
@@ -1759,7 +1759,7 @@ def parse_options():
         cmx_config_options['jobrole'] is None or cmx_config_options['jobfunction'] is None or
         cmx_config_options['accepted'] is not True):
         parser.error(msg_req_args + "please provide email, phone, firstname, lastname, jobrole, jobfunction and accept eula"+
-                     '-r/--email-address, -b/--business-phone, -f/--first-name, -t/--last-name, -o/--job-role, -f/--job-function,'+
+                     '-r/--email-address, -b/--business-phone, -f/--first-name, -t/--last-name, -o/--job-role, -i/--job-function,'+
                      '-e/--accept-eula')
 
     # Management services password. They are required when adding Management services
