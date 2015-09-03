@@ -1,7 +1,7 @@
 # These templates are currently in testing and will be ready soon. There may be issues deploying this template
 
 # Deploy a Cloudera CDH installation on CentOS virtual machines
-<a href="https://portal.azure.com/#create/Microsoft.Template/uri/https%3A%2F%2Fraw.githubusercontent.com%2Fnetwmr01%2Fcloudera-on-centos%2Fmaster%2Fazuredeploy.json" target="_blank">
+<a href="https://portal.azure.com/#create/Microsoft.Template/uri/https%3A%2F%2Fraw.githubusercontent.com%2Fnetwmr01%2Fcloudera-on-centos%2Fopen%2Fazuredeploy.json" target="_blank">
     <img src="http://azuredeploy.net/deploybutton.png" />
 </a>
 
