@@ -1757,7 +1757,7 @@ def parse_options():
     if (cmx_config_options['email'] is None or cmx_config_options['phone'] is None or
         cmx_config_options['fname'] is None or cmx_config_options['lname'] is None or
         cmx_config_options['jobrole'] is None or cmx_config_options['jobfunction'] is None or
-        cmx_config_options['accepted'] is not True):
+        options.accepted is not True):
         parser.error(msg_req_args + "please provide email, phone, firstname, lastname, jobrole, jobfunction and accept eula"+
                      '-r/--email-address, -b/--business-phone, -f/--first-name, -t/--last-name, -o/--job-role, -i/--job-function,'+
                      '-e/--accept-eula')
