@@ -118,6 +118,13 @@
         "description": "The size of the VMs deployed in the cluster (Defaults to Standard_D14)"
       }
     },
+    "company": {
+      "type": "string",
+      "defaultValue": "Company",
+      "metadata": {
+        "description": "Your Company"
+      }
+    },
     "emailAddress": {
       "type": "string",
       "defaultValue": "email@yourcompany.com",
@@ -369,6 +376,9 @@
           },
           "cmPassword": {
             "value": "[parameters('cmPassword')]"
+          },
+          "company": {
+            "value": "[parameters('Company')]"
           },
           "emailAddress": {
             "value": "[parameters('emailAddress')]"

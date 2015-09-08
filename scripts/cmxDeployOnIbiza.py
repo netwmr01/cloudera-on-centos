@@ -5,6 +5,7 @@ __version__ = '0.11.2803'
 
 import socket
 import re
+import urllib
 import urllib2
 from optparse import OptionParser
 import hashlib
@@ -1172,6 +1173,7 @@ def teardown(keep_cluster=True):
         api.delete_cluster(cmx.cluster_name)
 
 
+
 class ManagementActions:
     """
     Example stopping 'ACTIVITYMONITOR', 'REPORTSMANAGER' Management Role
@@ -1627,7 +1629,7 @@ def parse_options():
     cmx_config_options = {'ssh_root_password': None, 'ssh_root_user': 'root', 'ssh_private_key': None,
                           'cluster_name': 'Cluster 1', 'cluster_version': 'CDH5',
                           'username': 'cmadmin', 'password': 'cmpassword', 'cm_server': None,
-                          'host_names': None, 'license_file': None, 'parcel': [],
+                          'host_names': None, 'license_file': None, 'parcel': [], 'company': None,
                           'email': None, 'phone': None, 'fname': None, 'lname': None, 'jobrole': None,
                           'jobfunction': None}
 
@@ -1735,6 +1737,8 @@ def parse_options():
                       callback=cmx_args, help='Set job role')
     parser.add_option('-i', '--job-function', dest='jobfunction', type="string", action='callback',
                       callback=cmx_args, help='Set job function')
+    parser.add_option('-y', '--company', dest='company', type="string", action='callback',
+                      callback=cmx_args, help='Set job function')
     parser.add_option('-e', '--accept-eula', dest='accepted', action="store_true", default=False,
                       help='Must accept eula before install')
 
@@ -1761,10 +1765,11 @@ def parse_options():
     if (cmx_config_options['email'] is None or cmx_config_options['phone'] is None or
         cmx_config_options['fname'] is None or cmx_config_options['lname'] is None or
         cmx_config_options['jobrole'] is None or cmx_config_options['jobfunction'] is None or
+        cmx_config_options['company'] is None or
         options.accepted is not True):
-        parser.error(msg_req_args + "please provide email, phone, firstname, lastname, jobrole, jobfunction and accept eula"+
+        parser.error(msg_req_args + "please provide email, phone, firstname, lastname, jobrole, jobfunction, company and accept eula"+
                      '-r/--email-address, -b/--business-phone, -f/--first-name, -t/--last-name, -o/--job-role, -i/--job-function,'+
-                     '-e/--accept-eula')
+                     '-y/--company, -e/--accept-eula')
 
     # Management services password. They are required when adding Management services
     management = ManagementActions
@@ -1796,11 +1801,32 @@ def parse_options():
 def log(msg):
     print time.strftime("%X") + ": " + msg
 
+def postEulaInfo(firstName, lastName, emailAddress, company,jobRole, jobFunction, businessPhone):
+    elqFormName='Cloudera_Azure_EULA'
+    elqSiteID='1465054361'
+    cid='70134000001PsLS'
+    url = 'https://s1465054361.t.eloqua.com/e/f2'
+    data = urllib.urlencode({'elqFormName': elqFormName,
+                             'elqSiteID': elqSiteID,
+                             'cid': cid,
+                             'firstName': firstName,
+                             'lastName': lastName,
+                             'company': company,
+                             'emailAddress': emailAddress,
+                             'jobRole': jobRole,
+                             'jobFunction': jobFunction,
+                             'businessPhone': businessPhone
+                            })
+    results = urllib2.urlopen(url, data)
+    with open('results.html', 'w') as f:
+        log(results.read())
+
 def main():
     # Parse user options
     log("parse_options")
     options = parse_options()
-
+    postEulaInfo(cmx.fname, cmx.lname, cmx.company, cmx.email,
+                 cmx.jobrole, cmx.jobfunction, cmx.phone)
     # Prepare Cloudera Manager Server:
     # 1. Initialise Cluster and set Cluster name: 'Cluster 1'
     # 3. Add hosts into: 'Cluster 1'
