@@ -9,6 +9,7 @@ Once the trial has concluded, the Cloudera Enterprise features will be disabled 
 </a>
 
 Version 2015-08-06
+
 END USER LICENSE TERMS AND CONDITIONS
 
 THESE TERMS AND CONDITIONS (THESE “TERMS”) APPLY TO YOUR USE OF THE PRODUCTS (AS DEFINED BELOW) PROVIDED BY CLOUDERA, INC. (“CLOUDERA”).
