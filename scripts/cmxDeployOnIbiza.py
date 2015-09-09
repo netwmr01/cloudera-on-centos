@@ -1,10 +1,11 @@
 #!/usr/bin/env python
-#
+# -*- coding: utf-8 -*-
 
 __version__ = '0.11.2803'
 
 import socket
 import re
+import urllib
 import urllib2
 from optparse import OptionParser
 import hashlib
@@ -141,7 +142,7 @@ def deploy_parcel(parcel_product, parcel_version):
 
         while True:
             parcel = cluster.get_parcel(parcel_product, parcel_version)
-            if parcel.stage == 'DISTRIBUTED' or parcel.stage == 'ACTIVATED':
+            if parcel.stage == 'DISTRIBUTED' or par cel.stage == 'ACTIVATED':
                 break
            # if parcel.state.errors:
                # raise Exception(str(parcel.state.errors))
@@ -1172,6 +1173,7 @@ def teardown(keep_cluster=True):
         api.delete_cluster(cmx.cluster_name)
 
 
+
 class ManagementActions:
     """
     Example stopping 'ACTIVITYMONITOR', 'REPORTSMANAGER' Management Role
@@ -1617,6 +1619,57 @@ class ActiveCommands:
                         else "  [%s] %s - %s" % (resMsg['id'], resMsg['resultMessage'], resMsg['roleRef']['roleName'])
                 self._child_cmd(self._api.get("/commands/%s" % resMsg['id'])['children']['items'])
 
+def display_eula():
+    eula=('Version 2015-08-06 \n'+
+         'END USER LICENSE TERMS AND CONDITIONS\n'+
+         'THESE TERMS AND CONDITIONS (THESE "TERMS") APPLY TO YOUR USE OF THE PRODUCTS (AS DEFINED BELOW) PROVIDED BY CLOUDERA, INC. ("CLOUDERA").\n'+
+         'PLEASE READ THESE TERMS CAREFULLY.\n'+
+         'IF YOU ("YOU" OR "CUSTOMER") PLAN TO USE ANY OF THE PRODUCTS ON BEHALF OF A COMPANY OR OTHER ENTITY, YOU REPRESENT THAT YOU ARE THE EMPLOYEE OR AGENT OF SUCH COMPANY (OR OTHER ENTITY) AND YOU HAVE THE AUTHORITY TO ACCEPT ALL OF THE TERMS AND CONDITIONS SET FORTH IN AN ACCEPTED REQUEST (AS DEFINED BELOW) AND THESE TERMS (COLLECTIVELY, THE "AGREEMENT") ON BEHALF OF SUCH COMPANY (OR OTHER ENTITY).\n'+
+         'BY USING ANY OF THE PRODUCTS, YOU ACKNOWLEDGE AND AGREE THAT:\n'+
+         '(A) YOU HAVE READ ALL OF THE TERMS AND CONDITIONS OF THIS AGREEMENT;\n'+
+         '(B) YOU UNDERSTAND ALL OF THE TERMS AND CONDITIONS OF THIS AGREEMENT;\n'+
+         '(C) YOU AGREE TO BE LEGALLY BOUND BY ALL OF THE TERMS AND CONDITIONS SET FORTH IN THIS AGREEMENT\n'+
+         'IF YOU DO NOT AGREE WITH ANY OF THE TERMS OR CONDITIONS OF THESE TERMS, YOU MAY NOT USE ANY PORTION OF THE PRODUCTS.\n'+
+         'THE "EFFECTIVE DATE" OF THIS AGREEMENT IS THE DATE YOU FIRST DOWNLOAD ANY OF THE PRODUCTS.\n'+
+         '1. For the purpose of this Agreement, "Product" shall mean any of Cloudera’s products and software including but not limited to: Cloudera Manager, Cloudera Enterprise, Cloudera Live, Cloudera Express, Cloudera Director, any trial software, and any software related to the foregoing.\n'+
+         '2. Entire Agreement. This Agreement includes these Terms, any exhibits or web links attached to or referenced in these Terms and any terms set forth on the Cloudera web site. This Agreement is the entire agreement of the parties regarding the subject matter hereof, superseding all other agreements between them, whether oral or written, regarding the subject matter hereof.\n'+
+         '3. License Delivery. Cloudera grants to Customer a nonexclusive, nontransferable, nonsublicensable, revocable and limited license to access and use the applicable Product as defined above in Section 1 solely for Customer’s internal purposes. The Product is delivered via electronic download made available following Customer’s acceptance of this Agreement.\n'+
+         '4 License Restrictions. Unless expressly otherwise set forth in this Agreement, Customer will not: (a) modify, translate or create derivative works of the Product;\n'+
+         '(b) decompile, reverse engineer or reverse assemble any portion of the Product or attempt to discover any source code or underlying ideas or algorithms of the Product;\n'+
+         '(c) sell, assign, sublicense, rent, lease, loan, provide, distribute or otherwise transfer all or any portion of the Product;\n'+
+         '(d) make, have made, reproduce or copy the Product; (e) remove or alter any trademark, logo, copyright or other proprietary notices associated with the Product; and\n'+
+         '(f) cause or permit any other party to do any of the foregoing.\n'+
+         '5. Ownership. As between Cloudera and Customer and subject to the grants under this Agreement, Cloudera owns all right, title and interest in and to: (a) the Product (including, but not limited to, any modifications thereto); (b) all ideas, inventions, discoveries, improvements, information, creative works and any other works discovered, prepared or developed by Cloudera in the course of or resulting from the provision of any services under this Agreement; and (c) any and all Intellectual Property Rights embodied in the foregoing. For the purpose of this Agreement, "Intellectual Property Rights" means any and all patents, copyrights, moral rights, trademarks, trade secrets and any other form of intellectual property rights recognized in any jurisdiction, including applications and registrations for any of the foregoing. As between the parties and subject to the terms and conditions of this Agreement, Customer owns all right, title and interest in and to the data generated by the use of the Products by Customer. There are no implied licenses in this Agreement, and Cloudera reserves all rights not expressly granted under this Agreement. No licenses are granted by Cloudera to Customer under this Agreement, whether by implication, estoppels or otherwise, except as expressly set forth in this Agreement.\n'+
+         '6. Nondisclosure. "Confidential Information" means all information disclosed (whether in oral, written, or other tangible or intangible form) by Cloudera to Customer concerning or related to this Agreement or Cloudera (whether before, on or after the Effective Date) which Customer knows or should know, given the facts and circumstances surrounding the disclosure of the information by Customer, is confidential information of Cloudera. Confidential Information includes, but is not limited to, the components of the business plans, the Products, inventions, design plans, financial plans, computer programs, know-how, customer information, strategies and other similar information. Customer will, during the term of this Agreement, and thereafter maintain in confidence the Confidential Information and will not use such Confidential Information except as expressly permitted herein. Customer will use the same degree of care in protecting the Confidential Information as Customer uses to protect its own confidential information from unauthorized use or disclosure, but in no event less than reasonable care. Confidential Information will be used by Customer solely for the purpose of carrying out Customer’s obligations under this Agreement. In addition, Customer: (a) will not reproduce Confidential Information, in any form, except as required to accomplish Customer’s obligations under this Agreement; and (b) will only disclose Confidential Information to its employees and consultants who have a need to know such Confidential Information in order to perform their duties under this Agreement and if such employees and consultants have executed a non-disclosure agreement with Customer with terms no less restrictive than the non-disclosure obligations contained in this Section. Confidential Information will not include information that: (i) is in or enters the public domain without breach of this Agreement through no fault of Customer; (ii) Customer can reasonably demonstrate was in its possession prior to first receiving it from Cloudera; (iii) Customer can demonstrate was developed by Customer independently and without use of or reference to the Confidential Information; or (iv) Customer receives from a third-party without restriction on disclosure and without breach of a nondisclosure obligation. Notwithstanding any terms to the contrary in this Agreement, any suggestions, comments or other feedback provided by Customer to Cloudera with respect to the Products (collectively, "Feedback") will constitute Confidential Information. Further, Cloudera will be free to use, disclose, reproduce, license and otherwise distribute, and exploit the Feedback provided to it as it sees fit, entirely without obligation or restriction of any kind on account of Intellectual Property Rights or otherwise.\n'+
+         '7. Warranty Disclaimer. Customer represents warrants and covenants that: (a) all of its employees and consultants will abide by the terms of this Agreement; (b) it will comply with all applicable laws, regulations, rules, orders and other requirements, now or hereafter in effect, of any applicable governmental authority, in its performance of this Agreement. Notwithstanding any terms to the contrary in this Agreement, Customer will remain responsible for acts or omissions of all employees or consultants of Customer to the same extent as if such acts or omissions were undertaken by Customer. THE PRODUCTS ARE PROVIDED ON AN "AS IS" OR "AS AVAILABLE" BASIS WITHOUT ANY REPRESENTATIONS, WARRANTIES, COVENANTS OR CONDITIONS OF ANY KIND. CLOUDERA AND ITS SUPPLIERS DO NOT WARRANT THAT ANY OF THE PRODUCTS WILL BE FREE FROM ALL BUGS, ERRORS, OR OMISSIONS. CLOUDERA AND ITS SUPPLIERS DISCLAIM ANY AND ALL OTHER WARRANTIES AND REPRESENTATIONS (EXPRESS OR IMPLIED, ORAL OR WRITTEN) WITH RESPECT TO THE PRODUCTS WHETHER ALLEGED TO ARISE BY OPERATION OF LAW, BY REASON OF CUSTOM OR USAGE IN THE TRADE, BY COURSE OF DEALING OR OTHERWISE, INCLUDING ANY AND ALL (I) WARRANTIES OF MERCHANTABILITY, (II) WARRANTIES OF FITNESS OR SUITABILITY FOR ANY PURPOSE (WHETHER OR NOT CLOUDERA KNOWS, HAS REASON TO KNOW, HAS BEEN ADVISED, OR IS OTHERWISE AWARE OF ANY SUCH PURPOSE), AND (III) WARRANTIES OF NONINFRINGEMENT OR CONDITION OF TITLE. CUSTOMER ACKNOWLEDGES AND AGREES THAT CUSTOMER HAS RELIED ON NO WARRANTIES.\n'+
+         '8. Indemnification. Customer will indemnify, defend and hold Cloudera and its directors, officers, employees, suppliers, consultants, contractors, and agents ("Cloudera Indemnitees") harmless from and against any and all actual or threatened suits, actions, proceedings (at law or in equity), claims (groundless or otherwise), damages, payments, deficiencies, fines, judgments, settlements, liabilities, losses, costs and expenses (including, but not limited to, reasonable attorney fees, costs, penalties, interest and disbursements) resulting from any claim (including third-party claims), suit, action, or proceeding against any Cloudera Indemnitees, whether successful or not, caused by, arising out of, resulting from, attributable to or in any way incidental to:\n'+
+         '(a) any breach of this Agreement (including, but not limited to, any breach of any of Customer’s representations, warranties or covenants);\n'+
+         '(b) the negligence or willful misconduct of Customer; or\n'+
+         '(c) the data and information used in connection with or generated by the use of the Products.\n'+
+         '9. Limitation of Liability. EXCEPT FOR ANY ACTS OF FRAUD, GROSS NEGLIGENCE OR WILLFUL MISCONDUCT, IN NO EVENT WILL: (A) CLOUDERA BE LIABLE TO CUSTOMER OR ANY THIRD-PARTY FOR ANY LOSS OF PROFITS, LOSS OF DATA, LOSS OF USE, LOSS OF REVENUE, LOSS OF GOODWILL, ANY INTERRUPTION OF BUSINESS, ANY OTHER COMMERCIAL DAMAGES OR LOSSES, OR FOR ANY INDIRECT, SPECIAL, INCIDENTAL, EXEMPLARY, PUNITIVE OR CONSEQUENTIAL DAMAGES OF ANY KIND ARISING OUT OF OR IN CONNECTION WITH THIS AGREEMENT OR THE PRODUCTS (INCLUDING RELATED TO YOUR USE OR INABILITY TO USE THE PRODUCTS), REGARDLESS OF THE FORM OF ACTION, WHETHER IN CONTRACT, TORT, STRICT LIABILITY OR OTHERWISE, EVEN IF CLOUDERA HAS BEEN ADVISED OR IS OTHERWISE AWARE OF THE POSSIBILITY OF SUCH DAMAGES; AND (B) CLOUDERA’s TOTAL LIABILITY ARISING OUT OF OR RELATED TO THIS AGREEMENT EXCEED THE GREATER OF THE AGGREGATE OF THE AMOUNTS PAID OR PAYABLE TO CLOUDERA, IF ANY, UNDER THIS AGREEMENT OR FIVE U.S. DOLLARS. MULTIPLE CLAIMS WILL NOT EXPAND THIS LIMITATION. THE FOREGOING LIMITATIONS, EXCLUSIONS AND DISCLAIMERS SHALL APPLY TO THE MAXIMUM EXTENT PERMITTED BY APPLICABLE LAW, EVEN IF ANY REMEDY FAILS ITS ESSENTIAL PURPOSE.\n'+
+         '10. Third-Party Suppliers. The Product may include software or other code distributed under license from third-party suppliers ("Third Party Software"). Customer acknowledges that such third-party suppliers disclaim and make no representation or warranty with respect to the Products or any portion thereof and assume no liability for any claim that may arise with respect to the Products or Customer’s use or inability to use the same. Third Party Software licenses are set forth at this link: http://www.cloudera.com/content/cloudera/en/documentation/Licenses/Third-Party-Licenses/Third-Party-Licenses.html\n'+
+         '11. Google Analytics. To improve the product and gather feedback pro-actively from users, Google Analytics will be enabled by default in the product. Users have the option to disable this feature via the ‘Administration -> Properties’ settings in the product. Link to Google Analytics Terms of Service: http://www.google.com/analytics/terms/us.html\n'+
+         '12. Reporting. Customer acknowledges that the product contains a diagnostic functionality as its default configuration. The diagnostic function collects configuration files, node count, software versions, log files and other information regarding your environment, and reports that information to Cloudera in order for Cloudera to proactively diagnose any potential issues in the product. The diagnostic function may be modified by Customer in order to disable regular automatic reporting or to report only on filing of a support ticket.\n'+
+         '13. Termination. The term of this Agreement commences on the Effective Date and continues for the period stated on Cloudera’s web site, unless terminated for Customer’s breach of any material term herein. Notwithstanding any terms to the contrary in this Agreement, in the event of a breach of Sections 3, 4 or 6, Cloudera may immediately terminate this Agreement. Upon expiration or termination of this Agreement: (a) all rights granted to Customer under this Agreement will immediately cease; and (b) Customer will promptly provide Cloudera with all Confidential Information (including, but not limited to the Products) then in its possession or destroy all copies of such Confidential Information, at Cloudera’s sole discretion and direction. Notwithstanding any terms to the contrary in this Agreement, this sentence and the following Sections will survive any termination or expiration of this Agreement: 4, 6, 7, 8, 9, 10, 13, 15, and 16.\n'+
+         '14. In the event that Customer uses the functionality in the Product for the purposes of downloading and installing any Cloudera-provided public beta software, such beta software will be subject either to the Apache 2 license, or to the terms and conditions of the Public Beta License located here: http://www.cloudera.com/content/cloudera/en/legal/terms-and-conditions/ClouderaC5BetaLicense.html as applicable.\n'+
+         '15. Cloudera Products may include hyperlinks to other web sites or content or resources ("Third Party Resources"), and the functionality of such Cloudera Products may depend upon the availability of such Third Party Resources. Cloudera has no control over any Third Party Resources. You acknowledge and agree that Cloudera is not responsible for the availability of any such Third Party Resources, and does not endorse any advertising, products or other materials on or available from such Third Party Resources. You acknowledge and agree that Cloudera is not liable for any loss or damage which may be incurred by you as a result of the availability of Third Party Resources, or as a result of any reliance placed by you on the completeness, accuracy or existence of any advertising, products or other materials on, or available from, such Third Party Resources.\n'+
+         '16.  Miscellaneous. This Agreement will be governed by and construed in accordance with the laws of the State of California applicable to agreements made and to be entirely performed within the State of California, without resort to its conflict of law provisions. The parties agree that any action at law or in equity arising out of or relating to this Agreement will be filed only in the state and federal courts located in Santa Clara County, and the parties hereby irrevocably and unconditionally consent and submit to the exclusive jurisdiction of such courts over any suit, action or proceeding arising out of this Agreement. Upon such determination that any provision is invalid, illegal, or incapable of being enforced, the parties will negotiate in good faith to modify this Agreement so as to effect the original intent of the parties as closely as possible in an acceptable manner to the end that the transactions contemplated hereby are fulfilled. Except for payments due under this Agreement, neither party will be responsible for any failure to perform or delay attributable in whole or in part to any cause beyond its reasonable control, including but not limited to acts of God (fire, storm, floods, earthquakes, etc.), civil disturbances, disruption of telecommunications, disruption of power or other essential services, interruption or termination of service by any service providers being used by Cloudera to link its servers to the Internet, labor disturbances, vandalism, cable cut, computer viruses or other similar occurrences, or any malicious or unlawful acts of any third-party (each a "Force Majeure Event"). In the event of any such delay the date of delivery will be deferred for a period equal to the time lost by reason of the delay. Any notice or communication required or permitted to be given hereunder must be in writing signed or authorized by the party giving notice, and may be delivered by hand, deposited with an overnight courier, sent by confirmed email, confirmed facsimile or mailed by registered or certified mail, return receipt requested, postage prepaid, in each case to the address below or at such other address as may hereafter be furnished in accordance with this Section. No modification, addition or deletion, or waiver of any rights under this Agreement will be binding on a party unless made in an agreement clearly understood by the parties to be a modification or waiver and signed by a duly authorized representative of each party. No failure or delay (in whole or in part) on the part of a party to exercise any right or remedy hereunder will operate as a waiver thereof or effect any other right or remedy. All rights and remedies hereunder are cumulative and are not exclusive of any other rights or remedies provided hereunder or by law. The waiver of one breach or default or any delay in exercising any rights will not constitute a waiver of any subsequent breach or default.')
+    print eula
+    fname=raw_input("Please enter your first name: ")
+    lname=raw_input("Please enter your last name: ")
+    company=raw_input("Please enter your company: ")
+    email=raw_input("Please enter your email: ")
+    phone=raw_input("Please enter your phone: ")
+    jobrole=raw_input("Please enter your jobrole: ")
+    jobfunction=raw_input("Please enter your jobfunction: ")
+    accepted=raw_input("Please enter yes to accept EULA: ")
+    if accepted =='yes' and fname and lname and company and email and phone and jobrole and jobfunction:
+       postEulaInfo(fname, lname, company, email,
+                    jobrole, jobfunction, phone)
+       return True
+    else:
+        return False
+
 
 def parse_options():
     global cmx
@@ -1627,7 +1680,9 @@ def parse_options():
     cmx_config_options = {'ssh_root_password': None, 'ssh_root_user': 'root', 'ssh_private_key': None,
                           'cluster_name': 'Cluster 1', 'cluster_version': 'CDH5',
                           'username': 'cmadmin', 'password': 'cmpassword', 'cm_server': None,
-                          'host_names': None, 'license_file': None, 'parcel': []}
+                          'host_names': None, 'license_file': None, 'parcel': [], 'company': None,
+                          'email': None, 'phone': None, 'fname': None, 'lname': None, 'jobrole': None,
+                          'jobfunction': None, 'do_post':True}
 
     def cmx_args(option, opt_str, value, *args, **kwargs):
         if option.dest == 'host_names':
@@ -1721,6 +1776,22 @@ def parse_options():
                       callback=cmx_args, help='Set Cloudera Manager Username')
     parser.add_option('-s', '--cm-password', dest='password', type="string", action='callback',
                       callback=cmx_args, help='Set Cloudera Manager Password')
+    parser.add_option('-r', '--email-address', dest='email', type="string", action='callback',
+                      callback=cmx_args, help='Set email address')
+    parser.add_option('-b', '--business-phone', dest='phone', type="string", action='callback',
+                      callback=cmx_args, help='Set phone')
+    parser.add_option('-f', '--first-name', dest='fname', type="string", action='callback',
+                      callback=cmx_args, help='Set first name')
+    parser.add_option('-t', '--last-name', dest='lname', type="string", action='callback',
+                      callback=cmx_args, help='Set last name')
+    parser.add_option('-o', '--job-role', dest='jobrole', type="string", action='callback',
+                      callback=cmx_args, help='Set job role')
+    parser.add_option('-i', '--job-function', dest='jobfunction', type="string", action='callback',
+                      callback=cmx_args, help='Set job function')
+    parser.add_option('-y', '--company', dest='company', type="string", action='callback',
+                      callback=cmx_args, help='Set job function')
+    parser.add_option('-e', '--accept-eula', dest='accepted', action="store_true", default=False,
+                      help='Must accept eula before install')
 
     (options, args) = parser.parse_args()
 
@@ -1742,6 +1813,19 @@ def parse_options():
             parser.error(msg_req_args + "-w/--host-names")
         elif cmx_config_options['ssh_private_key'] and cmx_config_options['ssh_root_password']:
             parser.error(msg_req_args + "-p/--ssh-root-password _OR_ -k/--ssh-private-key")
+    if (cmx_config_options['email'] is None or cmx_config_options['phone'] is None or
+        cmx_config_options['fname'] is None or cmx_config_options['lname'] is None or
+        cmx_config_options['jobrole'] is None or cmx_config_options['jobfunction'] is None or
+        cmx_config_options['company'] is None or
+        options.accepted is not True):
+
+        eula_result=display_eula()
+        if(eula_result):
+            cmx_config_options['do_post']=False
+        else:
+            parser.error(msg_req_args + 'please provide email, phone, firstname, lastname, jobrole, jobfunction, company and accept eula'+
+                         '-r/--email-address, -b/--business-phone, -f/--first-name, -t/--last-name, -o/--job-role, -i/--job-function,'+
+                         '-y/--company, -e/--accept-eula')
 
     # Management services password. They are required when adding Management services
     management = ManagementActions
@@ -1773,11 +1857,33 @@ def parse_options():
 def log(msg):
     print time.strftime("%X") + ": " + msg
 
+def postEulaInfo(firstName, lastName, emailAddress, company,jobRole, jobFunction, businessPhone):
+    elqFormName='Cloudera_Azure_EULA'
+    elqSiteID='1465054361'
+    cid='70134000001PsLS'
+    url = 'https://s1465054361.t.eloqua.com/e/f2'
+    data = urllib.urlencode({'elqFormName': elqFormName,
+                             'elqSiteID': elqSiteID,
+                             'cid': cid,
+                             'firstName': firstName,
+                             'lastName': lastName,
+                             'company': company,
+                             'emailAddress': emailAddress,
+                             'jobRole': jobRole,
+                             'jobFunction': jobFunction,
+                             'businessPhone': businessPhone
+                            })
+    results = urllib2.urlopen(url, data)
+    with open('results.html', 'w') as f:
+        log(results.read())
+
 def main():
     # Parse user options
     log("parse_options")
     options = parse_options()
-
+    if(cmx.do_post):
+        postEulaInfo(cmx.fname, cmx.lname, cmx.company, cmx.email,
+                     cmx.jobrole, cmx.jobfunction, cmx.phone)
     # Prepare Cloudera Manager Server:
     # 1. Initialise Cluster and set Cluster name: 'Cluster 1'
     # 3. Add hosts into: 'Cluster 1'

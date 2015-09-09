@@ -196,6 +196,11 @@
       "apiVersion": "2015-05-01-preview",
       "type": "Microsoft.Compute/virtualMachines",
       "name": "[concat(variables('vmName'), copyIndex())]",
+      "plan": {
+        "name": "cloudera-centos-6",
+        "publisher": "cloudera",
+        "product": "cloudera-centos-6-preview"
+      },
       "location": "[parameters('region')]",
       "copy": {
         "name": "dataNodeNicLoop",
@@ -221,22 +226,26 @@
           }
         },
         "storageProfile": {
-          "osDisk": {
+          "imageReference":
+          {
+            "publisher": "cloudera",
+            "offer": "cloudera-centos-6-preview",
+            "sku": "CLOUDERA-CENTOS-6",
+            "version": "1.0.0"
+          },
+          "osDisk":
+          {
             "name": "osdisk",
             "vhd": {
-              "uri": "[concat('http://clouderaimagerepo', '.blob.core.windows.net/vhds/', variables('vmName'), copyIndex(), '.vhd')]"
+              "uri": "[concat('http://', copyIndex(), variables('storageAccountName'), '.blob.core.windows.net/vhds/', variables('vmName'), copyIndex(), '.vhd')]"
             },
-            "image" : {
-              "uri" : "https://clouderaimagerepo.blob.core.windows.net/copiedvhds/imagev3.vhd"
-            },
-            "osType":"linux",
             "caching": "ReadWrite",
             "createOption": "FromImage"
           },
           "dataDisks": [
             {
               "name": "datadisk0",
-              "diskSizeGB": "1023",
+              "diskSizeGB": "512",
               "lun": 0,
               "vhd": {
                 "Uri": "[concat('http://', copyIndex(), variables('storageAccountName'), '.blob.core.windows.net/vhds0/', variables('vmName'), '-datadisk0.vhd')]"
@@ -375,6 +384,15 @@
               "lun": 15,
               "vhd": {
                 "Uri": "[concat('http://', copyIndex(), variables('storageAccountName'), '.blob.core.windows.net/vhds15/', variables('vmName'), '-datadisk15.vhd')]"
+              },
+              "createOption": "Empty"
+            },
+            {
+              "name": "datadisk16",
+              "diskSizeGB": "1023",
+              "lun": 16,
+              "vhd": {
+                "Uri": "[concat('http://', copyIndex(), variables('storageAccountName'), '.blob.core.windows.net/vhds16/', variables('vmName'), '-datadisk15.vhd')]"
               },
               "createOption": "Empty"
             }

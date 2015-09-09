@@ -155,5 +155,5 @@ mountMasterBundle()
 }
 END
 
-bash -c "source ./inputs2.sh; helloFromInputs; printFstab; unmountAllDrives; mountMasterBundle; formatAndMountAllDrives;"
+bash -c "source ./inputs2.sh; helloFromInputs; printFstab; unmountAllDrives; mountMasterBundle;"
 exit 0  # and this is useful
