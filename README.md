@@ -7,8 +7,8 @@ Once the trial has concluded, the Cloudera Enterprise features will be disabled 
 <a href="https://portal.azure.com/#create/Microsoft.Template/uri/https%3A%2F%2Fnetwmr01.github.io%2Fcloudera-on-centos%2Fazuredeploy.json" target="_blank">
     <img src="http://azuredeploy.net/deploybutton.png" />
 </a>
-# Version 2015-08-06
-# END USER LICENSE TERMS AND CONDITIONS
+Version 2015-08-06
+END USER LICENSE TERMS AND CONDITIONS
 
 THESE TERMS AND CONDITIONS (THESE “TERMS”) APPLY TO YOUR USE OF THE PRODUCTS (AS DEFINED BELOW) PROVIDED BY CLOUDERA, INC. (“CLOUDERA”).
 
