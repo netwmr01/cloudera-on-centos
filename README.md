@@ -3,7 +3,7 @@
 # Deploy a Cloudera Express cluster with the option to unlock Cloudera Enterprise features for a free 60-day trial
 Once the trial has concluded, the Cloudera Enterprise features will be disabled until you obtain and upload a license.
 
-# By clicking "Deploy to azure" you agree with our Terms and Conditions.
+# By clicking "Deploy to Azure" you agree to the Terms and Conditions below.
 <a href="https://portal.azure.com/#create/Microsoft.Template/uri/https%3A%2F%2Fnetwmr01.github.io%2Fcloudera-on-centos%2Fazuredeploy.json" target="_blank">
     <img src="http://azuredeploy.net/deploybutton.png" />
 </a>
