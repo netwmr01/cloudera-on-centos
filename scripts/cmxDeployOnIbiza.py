@@ -142,7 +142,7 @@ def deploy_parcel(parcel_product, parcel_version):
 
         while True:
             parcel = cluster.get_parcel(parcel_product, parcel_version)
-            if parcel.stage == 'DISTRIBUTED' or par cel.stage == 'ACTIVATED':
+            if parcel.stage == 'DISTRIBUTED' or parcel.stage == 'ACTIVATED':
                 break
            # if parcel.state.errors:
                # raise Exception(str(parcel.state.errors))
