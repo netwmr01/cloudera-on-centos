@@ -100,10 +100,8 @@ mountDriveForLogCloudera()
 	mount -o noatime,barrier=1 -t ext4 $drivename $dirname
 	echo "$drivename   $dirname    ext4   defaults,noatime, barrier=0 0 1" | sudo tee -a /etc/fstab
 	mkdir /log/cloudera
-	mkdir /log/cloudera/parcel-repo
-	mkdir /log/cloudera/parcels
-	ln -s /log/cloudera/parcel-repo /opt/cloudera/parcel-repo
-	ln -s /log/cloudera/parcels /opt/cloudera/parcels
+	ln -s /log/cloudera /opt/cloudera
+
 }
 
 formatAndMountAllDrives() {
