@@ -142,7 +142,7 @@ def deploy_parcel(parcel_product, parcel_version):
 
         while True:
             parcel = cluster.get_parcel(parcel_product, parcel_version)
-            if parcel.stage == 'DISTRIBUTED' or parcel.stage == 'ACTIVATED':
+            if parcel.stage == 'DISTRIBUTED' or par cel.stage == 'ACTIVATED':
                 break
            # if parcel.state.errors:
                # raise Exception(str(parcel.state.errors))
@@ -1662,8 +1662,8 @@ def display_eula():
     phone=raw_input("Please enter your phone: ")
     jobrole=raw_input("Please enter your jobrole: ")
     jobfunction=raw_input("Please enter your jobfunction: ")
-    accepted=raw_input("Please enter y for accepting eula: ")
-    if accepted =='y' and fname and lname and company and email and phone and jobrole and jobfunction:
+    accepted=raw_input("Please enter yes to accept EULA: ")
+    if accepted =='yes' and fname and lname and company and email and phone and jobrole and jobfunction:
        postEulaInfo(fname, lname, company, email,
                     jobrole, jobfunction, phone)
        return True
