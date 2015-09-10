@@ -969,8 +969,7 @@ def setup_hdfs_ha():
             print ">Zookeeper name"+zookeeper.name
 
             cmd = hdfs.enable_nn_ha(hdfs.get_roles_by_type("NAMENODE")[0].name, standby_host_id,
-                                    "nameservice1", [dict(jnHostId=nn), dict(jnHostId=snn), dict(jnHostId=cm)],
-                                    zk_service_name=zookeeper.name)
+                                    "nameservice1", [dict(jnHostId=nn), dict(jnHostId=snn), dict(jnHostId=cm)])
             check.status_for_command("Enable HDFS-HA - [ http://%s:7180/cmf/command/%s/details ]" %
                                      (socket.getfqdn(cmx.cm_server), cmd.id), cmd)
 
