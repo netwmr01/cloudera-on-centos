@@ -1,5 +1,5 @@
 #!/usr/bin/env python
-#
+# -*- coding: ascii -*-
 __version__ = '0.11.2803'
 
 import socket
