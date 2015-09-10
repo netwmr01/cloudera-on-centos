@@ -966,10 +966,18 @@ def setup_hdfs_ha():
             role_group = hdfs.get_role_config_group("%s-JOURNALNODE-BASE" % hdfs.name)
             role_group.update_config({"dfs_journalnode_edits_dir": "/mnt/resource/dfs/jn"})
 
-            print ">Zookeeper name"+zookeeper.name
+            print ">Zookeeper name: "+zookeeper.name
+            print ">NAMENODE name: "+ hdfs.get_roles_by_type("NAMENODE")[0].name
+            print ">standby_host: "+ standby_host_id
+            print ">jnHostId: "+ [dict(jnHostId=nn), dict(jnHostId=snn), dict(jnHostId=cm)]
+            print "nn: "+ nn
+            print "snn: "+ snn
+            print "cm: "+ cm
+
 
             cmd = hdfs.enable_nn_ha(hdfs.get_roles_by_type("NAMENODE")[0].name, standby_host_id,
-                                    "nameservice1", [dict(jnHostId=nn), dict(jnHostId=snn), dict(jnHostId=cm)])
+                                    "nameservice1", [dict(jnHostId=nn), dict(jnHostId=snn), dict(jnHostId=cm)],
+                                    zk_service_name=zookeeper.name)
             check.status_for_command("Enable HDFS-HA - [ http://%s:7180/cmf/command/%s/details ]" %
                                      (socket.getfqdn(cmx.cm_server), cmd.id), cmd)
 
