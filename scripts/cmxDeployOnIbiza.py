@@ -936,6 +936,7 @@ def setup_hdfs_ha():
         print "> Setup HDFS-HA"
         hdfs = cdh.get_service_type('HDFS')
         zookeeper = cdh.get_service_type('ZOOKEEPER')
+
         # Requirement Hive/Hue
         hive = cdh.get_service_type('HIVE')
         hue = cdh.get_service_type('HUE')
@@ -963,6 +964,8 @@ def setup_hdfs_ha():
             # hdfs-JOURNALNODE - Default Group
             role_group = hdfs.get_role_config_group("%s-JOURNALNODE-BASE" % hdfs.name)
             role_group.update_config({"dfs_journalnode_edits_dir": "/mnt/resource/dfs/jn"})
+
+            print "Zookpeer name"+zookeeper.name
 
             cmd = hdfs.enable_nn_ha(hdfs.get_roles_by_type("NAMENODE")[0].name, standby_host_id,
                                     "nameservice1", [dict(jnHostId=nn), dict(jnHostId=snn), dict(jnHostId=cm)],
