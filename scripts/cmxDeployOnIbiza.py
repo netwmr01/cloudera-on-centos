@@ -17,6 +17,8 @@ from cm_api.api_client import ApiResource, ApiException
 from cm_api.endpoints.hosts import *
 from cm_api.endpoints.services import ApiServiceSetupInfo, ApiService
 
+diskcount=10
+
 LOG_DIR='/log/cloudera'
 def init_cluster():
     """
@@ -247,20 +249,17 @@ def setup_hdfs(HA):
         default_name_dir_list = ""
         default_snn_dir_list = ""
         default_data_dir_list = ""
-        bashCommand="ls -la / | grep data | wc -l > count.out"
 
-        os.system(bashCommand)
-        f = open('count.out', 'r')
-        count=f.readline().rstrip('\n')
 
         dfs_name_dir_list = default_name_dir_list
         dfs_snn_dir_list = default_snn_dir_list
         dfs_data_dir_list = default_data_dir_list
 
-        for x in range(int(count)):
-          dfs_name_dir_list+=",/data%d/dfs/nn" % (x)
-          dfs_snn_dir_list+=",/data%d/dfs/snn" % (x)
+        for x in range(int(diskcount)):
           dfs_data_dir_list+=",/data%d/dfs/dn" % (x)
+
+        dfs_name_dir_list+=",/data/dfs/nn"
+        dfs_snn_dir_list+=",/data/dfs/snn"
 
         #No HA, using POC setup, all service in one master node aka the cm host
         if not HA:
@@ -526,15 +525,10 @@ def setup_yarn(HA):
 
         # empty list so it won't use ephemeral drive
         default_yarn_dir_list = ""
-        bashCommand="ls -la / | grep data | wc -l > count2.out"
-
-        os.system(bashCommand)
-        f = open('count2.out', 'r')
-        count=f.readline().rstrip('\n')
 
         yarn_dir_list = default_yarn_dir_list
 
-        for x in range(int(count)):
+        for x in range(int(diskcount)):
           yarn_dir_list+=",/data%d/yarn/nm" % (x)
 
         cmhost= management.get_cmhost()
@@ -773,17 +767,12 @@ def setup_impala(HA):
     """
 
     default_impala_dir_list = ""
-    bashCommand="ls -la / | grep data | wc -l > count3.out"
-
-    os.system(bashCommand)
-    f = open('count3.out', 'r')
-    count=f.readline().rstrip('\n')
 
     impala_dir_list = default_impala_dir_list
 
-    for x in range(int(count)):
+    for x in range(int(diskcount)):
         impala_dir_list+="/data%d/impala/scratch" % (x)
-        max_count=int(count)-1
+        max_count=int(diskcount)-1
         if x < max_count:
           impala_dir_list+=","
           print "x is %d. Adding comma" % (x)
@@ -934,7 +923,6 @@ def setup_hdfs_ha():
     # cluster = api.get_cluster(cmx.cluster_name)
     try:
         print "> Setup HDFS-HA"
-        print ">Zookeeper name"
         hdfs = cdh.get_service_type('HDFS')
         zookeeper = cdh.get_service_type('ZOOKEEPER')
 
@@ -964,18 +952,10 @@ def setup_hdfs_ha():
 
             # hdfs-JOURNALNODE - Default Group
             role_group = hdfs.get_role_config_group("%s-JOURNALNODE-BASE" % hdfs.name)
-            role_group.update_config({"dfs_journalnode_edits_dir": "/data/qjn"})
-
-            print ">Zookeeper name: "+zookeeper.name
-            print ">NAMENODE name: "+ hdfs.get_roles_by_type("NAMENODE")[0].name
-            print ">standby_host: "+ standby_host_id
-            jn = random.sample([x.hostRef.hostId for x in hdfs.get_roles_by_type("DATANODE")], 3)
-            print jn[0], jn[1], jn[2]
-            print nn_host_id, sndnn_host_id, cm.hostId
-
+            role_group.update_config({"dfs_journalnode_edits_dir": "/data/dfs/jn"})
 
             cmd = hdfs.enable_nn_ha(hdfs.get_roles_by_type("NAMENODE")[0].name, standby_host_id,
-                                    "nameservice1", [dict(jnHostId=nn_host_id), dict(jnHostId= sndnn_host_id), dict(jnHostId=cm.hostId)],
+                                    "nameservice1", [dict(jnHostId=nn_host_id), dict(jnHostId=sndnn_host_id), dict(jnHostId=cm.hostId)],
                                     zk_service_name=zookeeper.name)
             check.status_for_command("Enable HDFS-HA - [ http://%s:7180/cmf/command/%s/details ]" %
                                      (socket.getfqdn(cmx.cm_server), cmd.id), cmd)
