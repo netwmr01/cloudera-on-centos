@@ -1,5 +1,5 @@
 #!/usr/bin/env python
-
+# -*- coding: ascii -*-
 __version__ = '0.11.2803'
 
 import socket
@@ -925,6 +925,7 @@ def setup_hdfs_ha():
         print "> Setup HDFS-HA"
         hdfs = cdh.get_service_type('HDFS')
         zookeeper = cdh.get_service_type('ZOOKEEPER')
+
         # Requirement Hive/Hue
         hive = cdh.get_service_type('HIVE')
         hue = cdh.get_service_type('HUE')
