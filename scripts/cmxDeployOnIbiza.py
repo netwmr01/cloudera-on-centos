@@ -971,11 +971,11 @@ def setup_hdfs_ha():
             print ">standby_host: "+ standby_host_id
             jn = random.sample([x.hostRef.hostId for x in hdfs.get_roles_by_type("DATANODE")], 3)
             print jn[0], jn[1], jn[2]
-            print nn_host_id, sndnn_host_id, cm.hostRef.hostId
+            print nn_host_id, sndnn_host_id, cm.hostId
 
 
             cmd = hdfs.enable_nn_ha(hdfs.get_roles_by_type("NAMENODE")[0].name, standby_host_id,
-                                    "nameservice1", [dict(jnHostId=nn_host_id), dict(jnHostId= sndnn_host_id), dict(jnHostId=cm.hostRef.hostId)],
+                                    "nameservice1", [dict(jnHostId=nn_host_id), dict(jnHostId= sndnn_host_id), dict(jnHostId=cm.hostId)],
                                     zk_service_name=zookeeper.name)
             check.status_for_command("Enable HDFS-HA - [ http://%s:7180/cmf/command/%s/details ]" %
                                      (socket.getfqdn(cmx.cm_server), cmd.id), cmd)
