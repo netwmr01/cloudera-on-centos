@@ -969,7 +969,7 @@ def setup_hdfs_ha():
             print ">Zookeeper name: "+zookeeper.name
             print ">NAMENODE name: "+ hdfs.get_roles_by_type("NAMENODE")[0].name
             print ">standby_host: "+ standby_host_id
-            print ">jnHostId: "+ [dict(jnHostId=nn), dict(jnHostId=snn), dict(jnHostId=cm)]
+            print [dict(jnHostId=nn), dict(jnHostId=snn), dict(jnHostId=cm)]
             print "nn: "+ nn
             print "snn: "+ snn
             print "cm: "+ cm
