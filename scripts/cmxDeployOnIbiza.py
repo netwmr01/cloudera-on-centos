@@ -964,15 +964,14 @@ def setup_hdfs_ha():
 
             # hdfs-JOURNALNODE - Default Group
             role_group = hdfs.get_role_config_group("%s-JOURNALNODE-BASE" % hdfs.name)
-            role_group.update_config({"dfs_journalnode_edits_dir": "/mnt/resource/dfs/jn"})
+            role_group.update_config({"dfs_journalnode_edits_dir": "/data/qjn"})
 
             print ">Zookeeper name: "+zookeeper.name
             print ">NAMENODE name: "+ hdfs.get_roles_by_type("NAMENODE")[0].name
             print ">standby_host: "+ standby_host_id
-            print [dict(jnHostId=nn), dict(jnHostId=snn), dict(jnHostId=cm)]
-            print "nn: "+ nn
-            print "snn: "+ snn
-            print "cm: "+ cm
+            jn = random.sample([x.hostRef.hostId for x in hdfs.get_roles_by_type("DATANODE")], 3)
+            print jn[0], jn[1], jn[2]
+            print nn, snn, cm
 
 
             cmd = hdfs.enable_nn_ha(hdfs.get_roles_by_type("NAMENODE")[0].name, standby_host_id,
