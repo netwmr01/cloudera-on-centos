@@ -327,7 +327,7 @@
           "imageReference":
           {
             "publisher": "cloudera",
-            "offer": "cloudera-centos-6-preview",
+            "offer": "cloudera-centos-6",
             "sku": "CLOUDERA-CENTOS-6",
             "version": "1.0.0"
           },
