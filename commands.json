@@ -1,0 +1,4 @@
+"settings": 
+{
+  "commandToExecute": "sed -i '/Defaults[[:space:]]\\+!*requiretty/s/^/#/' /etc/sudoers\n ; echo \"$ADMINUSER ALL=(ALL) NOPASSWD: ALL\" >> /etc/sudoers;";
+}
